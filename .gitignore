@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+.env.local
+.gitignore
+pakage.json
+pakage-lock.json
 
 # Editor directories and files
 .vscode/*
