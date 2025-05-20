@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { Search, Sparkles } from "lucide-react";
 import JobCard from "./JobCard";
 import FilterSidebar from "./FilterSidebar";
