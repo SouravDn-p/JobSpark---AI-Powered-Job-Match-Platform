@@ -18,13 +18,11 @@ const AuthProvider = ({ children }) => {
   const [dbUser, setDbUser] = useState(null);
   const [response, setResponse] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [doctors, setDoctors] = useState(null);
   const axiosSecure = useAxiosSecure();
   const axiosPublic = useAxiosPublic();
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [loader, setLoader] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -107,10 +105,8 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      console.log("user", currentUser?.photoURL);
-
       if (currentUser?.email) {
-        axiosSecure.post("/jwt").then((res) => setResponse(res));
+        axiosSecure.post("/jwt", currentUser).then((res) => setResponse(res));
         axiosPublic
           .post("/user", {
             email: currentUser?.email || "demo user",
@@ -148,8 +144,6 @@ const AuthProvider = ({ children }) => {
     setLoader,
     response,
     setResponse,
-    doctors,
-    setDoctors,
     dbUser,
     setDbUser,
     errorMessage,
@@ -157,8 +151,6 @@ const AuthProvider = ({ children }) => {
     isDarkMode,
     isMobile,
     setIsMobile,
-    selectedUser,
-    setSelectedUser,
   };
 
   return (

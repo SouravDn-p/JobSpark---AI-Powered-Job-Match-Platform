@@ -13,6 +13,7 @@ import {
   Bell,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
+import logo from "../../assets/logo.jpg";
 
 // Helper function to conditionally join class names
 const cn = (...classes) => {
@@ -21,7 +22,7 @@ const cn = (...classes) => {
 
 const Navbar = () => {
   const location = useLocation();
-  const { user, signOutUser, toggleUser, theme, toggleTheme, isMobile } =
+  const { user, signOutUser, toggleUser, toggleTheme, isMobile, isDarkMode } =
     useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -52,6 +53,11 @@ const Navbar = () => {
   const toggleNotificationDropdown = () => {
     setIsNotificationDropdownOpen(!isNotificationDropdownOpen);
     if (isUserDropdownOpen) setIsUserDropdownOpen(false);
+  };
+
+  // Use isDarkMode for mode toggling
+  const toggleMode = () => {
+    toggleTheme(); // Call existing toggleTheme to maintain state consistency
   };
 
   // Close mobile menu and dropdowns when route changes
@@ -87,10 +93,14 @@ const Navbar = () => {
         className={cn(
           "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
           "hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600",
-          "dark:hover:from-gray-800 dark:hover:to-gray-700 dark:hover:text-blue-400",
+          isDarkMode
+            ? "dark:hover:from-gray-800 dark:hover:to-gray-700 dark:hover:text-blue-400"
+            : "",
           isActive
             ? "text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 shadow-sm"
-            : "text-gray-600 dark:text-gray-300",
+            : isDarkMode
+            ? "text-gray-300"
+            : "text-gray-800",
           className
         )}
       >
@@ -125,19 +135,25 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800">
+    <nav
+      className={cn(
+        "sticky top-0 z-50 border-b",
+        isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+      )}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
             <div className="relative">
-              <Briefcase
-                className="h-8 w-8 text-blue-600 dark:text-blue-400 transition-all duration-300 group-hover:opacity-0"
+              <img
+                src={logo}
+                className={cn(
+                  "h-8 w-8 transition-all rounded-2xl duration-300 ",
+                  isDarkMode ? "text-blue-400" : "text-blue-600"
+                )}
                 aria-hidden="true"
-              />
-              <Sparkles
-                className="h-8 w-8 text-purple-600 dark:text-purple-400 absolute top-0 left-0 opacity-0 transition-all duration-300 group-hover:opacity-100 animate-pulse"
-                aria-hidden="true"
+                alt="logo"
               />
             </div>
             <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -163,7 +179,12 @@ const Navbar = () => {
                 <div className="relative dropdown-container">
                   <Button
                     onClick={toggleNotificationDropdown}
-                    className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
+                    className={cn(
+                      "p-2 rounded-full hover:bg-blue-100",
+                      isDarkMode
+                        ? "text-gray-300 dark:hover:bg-gray-800"
+                        : "text-gray-800"
+                    )}
                     aria-label="Notifications"
                   >
                     <Bell className="h-5 w-5" />
@@ -171,11 +192,28 @@ const Navbar = () => {
                   </Button>
 
                   {isNotificationDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-50 border border-gray-200 dark:border-gray-700">
-                      <div className="p-2 font-medium border-b border-gray-200 dark:border-gray-700">
+                    <div
+                      className={cn(
+                        "absolute right-0 mt-2 w-64 rounded-lg shadow-lg py-2 z-50 border",
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700"
+                          : "bg-white border-gray-200"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "p-2 font-medium border-b",
+                          isDarkMode ? "border-gray-700" : "border-gray-200"
+                        )}
+                      >
                         Notifications
                       </div>
-                      <div className="p-4 text-sm text-center text-gray-500 dark:text-gray-400">
+                      <div
+                        className={cn(
+                          "p-4 text-sm text-center",
+                          isDarkMode ? "text-gray-400" : "text-gray-600"
+                        )}
+                      >
                         No new notifications
                       </div>
                     </div>
@@ -186,11 +224,23 @@ const Navbar = () => {
                 <div className="relative dropdown-container">
                   <Button
                     onClick={toggleUserDropdown}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800 transition-all duration-200"
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                      isDarkMode
+                        ? "text-gray-300 hover:bg-gray-800"
+                        : "text-gray-800 hover:bg-blue-50"
+                    )}
                     aria-expanded={isUserDropdownOpen}
                     aria-label="User menu"
                   >
-                    <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-400 to-purple-500">
+                    <div
+                      className={cn(
+                        "h-8 w-8 rounded-full overflow-hidden border-2",
+                        isDarkMode
+                          ? "border-blue-900 bg-gradient-to-br from-blue-400 to-purple-500"
+                          : "border-blue-200 bg-gradient-to-br from-blue-400 to-purple-500"
+                      )}
+                    >
                       {user.photoURL ? (
                         <img
                           src={user.photoURL || "/placeholder.svg"}
@@ -210,10 +260,22 @@ const Navbar = () => {
                   </Button>
 
                   {isUserDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-50 border border-gray-200 dark:border-gray-700">
+                    <div
+                      className={cn(
+                        "absolute right-0 mt-2 w-56 rounded-lg shadow-lg py-2 z-50 border",
+                        isDarkMode
+                          ? "bg-gray-800 border-gray-700"
+                          : "bg-white border-gray-200"
+                      )}
+                    >
                       <NavLink
                         to="/profilePage"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 text-sm",
+                          isDarkMode
+                            ? "text-gray-300 hover:bg-gray-700"
+                            : "text-gray-800 hover:bg-blue-50"
+                        )}
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
                         <User className="h-4 w-4" />
@@ -221,16 +283,31 @@ const Navbar = () => {
                       </NavLink>
                       <NavLink
                         to="/dashboard"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 text-sm",
+                          isDarkMode
+                            ? "text-gray-300 hover:bg-gray-700"
+                            : "text-gray-800 hover:bg-blue-50"
+                        )}
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
                         <Briefcase className="h-4 w-4" />
                         Dashboard
                       </NavLink>
-                      <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                      <div
+                        className={cn(
+                          "border-t my-1",
+                          isDarkMode ? "border-gray-700" : "border-gray-200"
+                        )}
+                      ></div>
                       <button
                         onClick={handleSignOut}
-                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
+                        className={cn(
+                          "flex w-full items-center gap-2 px-4 py-2 text-sm",
+                          isDarkMode
+                            ? "text-gray-300 hover:bg-gray-700"
+                            : "text-gray-800 hover:bg-blue-50"
+                        )}
                       >
                         <LogOut className="h-4 w-4" />
                         Logout
@@ -253,15 +330,18 @@ const Navbar = () => {
 
             {/* Theme Toggle */}
             <Button
-              onClick={toggleTheme}
-              className="p-2 ml-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={toggleMode}
+              className={cn(
+                "p-2 ml-2 rounded-full",
+                isDarkMode
+                  ? "text-gray-300 hover:bg-gray-800"
+                  : "text-gray-800 hover:bg-blue-100"
+              )}
               aria-label={
-                theme === "dark"
-                  ? "Switch to light mode"
-                  : "Switch to dark mode"
+                isDarkMode ? "Switch to light mode" : "Switch to dark mode"
               }
             >
-              {theme === "dark" ? (
+              {isDarkMode ? (
                 <Sun
                   className="h-5 w-5 text-yellow-400 animate-spin"
                   style={{ animationDuration: "3s" }}
@@ -279,15 +359,18 @@ const Navbar = () => {
           <div className="md:hidden flex items-center gap-2">
             {/* Theme Toggle - Mobile */}
             <Button
-              onClick={toggleTheme}
-              className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={toggleMode}
+              className={cn(
+                "p-2 rounded-full",
+                isDarkMode
+                  ? "text-gray-300 hover:bg-gray-800"
+                  : "text-gray-800 hover:bg-blue-100"
+              )}
               aria-label={
-                theme === "dark"
-                  ? "Switch to light mode"
-                  : "Switch to dark mode"
+                isDarkMode ? "Switch to light mode" : "Switch to dark mode"
               }
             >
-              {theme === "dark" ? (
+              {isDarkMode ? (
                 <Sun
                   className="h-5 w-5 text-yellow-400 animate-spin"
                   style={{ animationDuration: "3s" }}
@@ -304,7 +387,12 @@ const Navbar = () => {
             {!isMobile && (
               <Button
                 onClick={toggleUser}
-                className="px-3 py-1 text-xs border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className={cn(
+                  "px-3 py-1 text-xs border rounded-md",
+                  isDarkMode
+                    ? "border-gray-700 text-gray-300 hover:bg-gray-800"
+                    : "border-gray-300 text-gray-800 hover:bg-gray-100"
+                )}
               >
                 {user ? "Logout" : "Login"}
               </Button>
@@ -312,7 +400,12 @@ const Navbar = () => {
 
             <Button
               onClick={toggleMenu}
-              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800 focus:outline-none"
+              className={cn(
+                "p-2 rounded-lg",
+                isDarkMode
+                  ? "text-gray-300 hover:bg-gray-800"
+                  : "text-gray-800 hover:bg-blue-100"
+              )}
               aria-expanded={isMenuOpen}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -333,7 +426,12 @@ const Navbar = () => {
           isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        <div className="px-4 pt-2 pb-4 space-y-2 border-t border-gray-200 dark:border-gray-700">
+        <div
+          className={cn(
+            "px-4 pt-2 pb-4 space-y-2 border-t",
+            isDarkMode ? "border-gray-700" : "border-gray-200"
+          )}
+        >
           <NavItem to="/jobs" className="w-full">
             <Search className="h-4 w-4" />
             Job Listings
@@ -347,14 +445,19 @@ const Navbar = () => {
               </NavItem>
               <NavItem to="/profilePage" className="w-full">
                 <User className="h-4 w-4" />
-                profilePage
+                Profile
               </NavItem>
               <NavItem to="/dashboard" className="w-full">
                 <Briefcase className="h-4 w-4" />
                 Dashboard
               </NavItem>
               <button
-                className="flex w-full items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-gray-800 transition-all duration-200"
+                className={cn(
+                  "flex w-full items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  isDarkMode
+                    ? "text-gray-300 hover:text-blue-300 hover:bg-gray-800"
+                    : "text-gray-800 hover:text-blue-700 hover:bg-blue-50"
+                )}
                 onClick={handleSignOut}
               >
                 <LogOut className="h-4 w-4" />

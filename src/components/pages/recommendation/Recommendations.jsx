@@ -286,7 +286,7 @@ export default function Recommendations() {
             >
               These skills are used to generate your job recommendations.{" "}
               <Link
-                to="/profile"
+                to="/profilePage"
                 className="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 Update your skills
@@ -312,7 +312,7 @@ export default function Recommendations() {
                 improve your job recommendations.
               </p>
               <Link
-                to="/profile"
+                to="/profilePage"
                 className={`mt-2 inline-block text-sm font-medium ${
                   isDarkMode
                     ? "text-blue-400 hover:text-blue-300"
@@ -379,7 +379,7 @@ export default function Recommendations() {
             </p>
             <div className="mt-4 space-x-4">
               <Link
-                to="/profile"
+                to="/profilePage"
                 className={`text-sm font-medium ${
                   isDarkMode
                     ? "text-blue-400 hover:text-blue-300"

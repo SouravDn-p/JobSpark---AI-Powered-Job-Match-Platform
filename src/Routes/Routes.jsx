@@ -6,7 +6,6 @@ import JobListings from "../components/pages/JobListing";
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import Recommendations from "../components/pages/recommendation/Recommendations";
-import Profile from "../components/pages/Profile/Profile";
 import DashboardPage from "../components/pages/Dashboard/DashboardPage";
 import ProfilePage from "../components/pages/Profile/ProfilePage";
 
@@ -31,10 +30,6 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DashboardPage />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
       },
       {
         path: "/profilePage",
