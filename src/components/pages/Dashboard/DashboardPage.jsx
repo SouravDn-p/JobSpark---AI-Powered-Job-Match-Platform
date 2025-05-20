@@ -627,6 +627,7 @@ const DashboardPage = () => {
                           job={job}
                           matchScore={job.matchScore}
                           showMatchScore={true}
+                          isDarkMode={isDarkMode}
                         />
                       ))}
                       <div className="mt-4 text-center">

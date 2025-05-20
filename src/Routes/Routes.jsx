@@ -8,6 +8,7 @@ import Register from "../components/auth/Register";
 import Recommendations from "../components/pages/recommendation/Recommendations";
 import DashboardPage from "../components/pages/Dashboard/DashboardPage";
 import ProfilePage from "../components/pages/Profile/ProfilePage";
+import JobDetailsPage from "../components/pages/jobs/JobDetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: "/jobs",
         element: <JobListings />,
+      },
+      {
+        path: "/jobs/:id",
+        element: <JobDetailsPage />,
       },
       {
         path: "/recommendations",

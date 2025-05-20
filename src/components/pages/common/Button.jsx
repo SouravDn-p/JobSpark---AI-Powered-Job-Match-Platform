@@ -1,113 +1,91 @@
-import { forwardRef } from 'react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import LoadingSpinner from './LoadingSpinner'
+import useAuth from "../../hooks/useAuth";
 
-const Button = forwardRef(
-  (
-    {
-      children,
-      variant = 'primary',
-      size = 'md',
-      as = 'button',
-      to,
-      href,
-      isLoading = false,
-      fullWidth = false,
-      icon,
-      iconPosition = 'left',
-      className = '',
-      ...props
-    },
-    ref
-  ) => {
-    // Base button styles
-    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2'
-    
-    // Size variations
-    const sizeStyles = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2',
-      lg: 'px-6 py-3 text-lg',
-    }
-    
-    // Variant styles
-    const variantStyles = {
-      primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-      secondary: 'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500',
-      accent: 'bg-accent-600 text-white hover:bg-accent-700 focus:ring-accent-500',
-      outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
-      ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-      danger: 'bg-error-600 text-white hover:bg-error-700 focus:ring-error-500',
-      success: 'bg-success-600 text-white hover:bg-success-700 focus:ring-success-500',
-    }
-    
-    const allStyles = `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${fullWidth ? 'w-full' : ''} ${className}`
-    
-    // Handle icon positioning
-    const iconElement = icon && (
-      <span className={`${iconPosition === 'left' ? 'mr-2' : 'ml-2'}`}>
-        {icon}
-      </span>
-    )
-    
-    // Content with optional loading spinner
-    const content = (
-      <>
-        {isLoading && (
-          <span className="mr-2">
-            <LoadingSpinner size="sm" color={variant === 'primary' ? 'white' : 'primary'} />
-          </span>
-        )}
-        {icon && iconPosition === 'left' && iconElement}
-        {children}
-        {icon && iconPosition === 'right' && iconElement}
-      </>
-    )
-    
-    // Render as Link if "to" prop is provided
-    if (to) {
-      return (
-        <Link to={to} className={allStyles} ref={ref} {...props}>
-          {content}
-        </Link>
-      )
-    }
-    
-    // Render as anchor if "href" prop is provided
-    if (href) {
-      return (
-        <a href={href} className={allStyles} ref={ref} {...props}>
-          {content}
-        </a>
-      )
-    }
-    
-    // Custom component rendering
-    if (as !== 'button') {
-      const Component = motion[as] || as
-      return (
-        <Component className={allStyles} ref={ref} {...props}>
-          {content}
-        </Component>
-      )
-    }
-    
-    // Default button rendering
-    return (
-      <motion.button
-        whileTap={{ scale: 0.98 }}
-        className={allStyles}
-        disabled={isLoading}
-        ref={ref}
-        {...props}
-      >
-        {content}
-      </motion.button>
-    )
-  }
-)
+const Button = ({
+  children,
+  onClick,
+  variant = "default",
+  size = "default",
+  type = "button",
+  isLoading = false,
+  className = "",
+  icon = null,
+}) => {
+  const { isDarkMode } = useAuth();
 
-Button.displayName = 'Button'
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
-export default Button
+  const variants = {
+    primary: `${
+      isDarkMode
+        ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white focus:ring-purple-500"
+        : "bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white focus:ring-purple-500"
+    }`,
+    secondary: `${
+      isDarkMode
+        ? "bg-gray-700 hover:bg-gray-600 text-white focus:ring-gray-500"
+        : "bg-gray-200 hover:bg-gray-300 text-gray-800 focus:ring-gray-300"
+    }`,
+    outline: `${
+      isDarkMode
+        ? "border border-gray-600 hover:border-gray-500 bg-transparent hover:bg-gray-800 text-gray-300 focus:ring-gray-500"
+        : "border border-gray-300 hover:border-gray-400 bg-transparent hover:bg-gray-50 text-gray-800 focus:ring-gray-300"
+    }`,
+    danger: `${
+      isDarkMode
+        ? "bg-red-600 hover:bg-red-700 text-white focus:ring-red-500"
+        : "bg-red-500 hover:bg-red-600 text-white focus:ring-red-400"
+    }`,
+    default: `${
+      isDarkMode
+        ? "bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-500"
+        : "bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 focus:ring-blue-500"
+    }`,
+  };
+
+  const sizes = {
+    small: "px-3 py-1.5 text-xs",
+    default: "px-4 py-2 text-sm",
+    large: "px-6 py-3 text-base",
+  };
+
+  const loadingClasses = isLoading
+    ? "opacity-80 cursor-not-allowed"
+    : "cursor-pointer";
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={isLoading}
+      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${loadingClasses} ${className}`}
+    >
+      {isLoading && (
+        <svg
+          className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      )}
+      {icon && <span className={`${children ? "mr-2" : ""}`}>{icon}</span>}
+      {children}
+    </button>
+  );
+};
+
+export default Button;
