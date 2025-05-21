@@ -10,14 +10,15 @@ import {
   FaRegStar,
   FaArrowLeft,
 } from "react-icons/fa";
-import Button from "../common/Button";
-import Card from "../common/Card"; // Assuming a Card component exists
+import Card from "../common/Card";
 import useAuth from "../../hooks/useAuth";
+import ApplySection from "./ApplySection";
 
 const JobDetailsPage = () => {
-  const { id } = useParams(); // Get job ID from URL
-  const { isDarkMode } = useAuth(); // Get dark mode state
-  const [isSaved, setIsSaved] = useState(false); // Local state for saving job
+  const { id } = useParams();
+  const { isDarkMode, dbUser } = useAuth();
+  const [isSaved, setIsSaved] = useState(false);
+
   const jobData = [
     {
       id: "1",
@@ -260,10 +261,9 @@ const JobDetailsPage = () => {
     },
   ];
 
-  // Find job by ID
   const job = jobData.find((job) => job.id === id);
+  const isApplied = dbUser?.applications?.find((job) => job.jobId == id);
 
-  // Handle case where job is not found
   if (!job) {
     return (
       <div
@@ -278,7 +278,6 @@ const JobDetailsPage = () => {
 
   const toggleSaved = () => {
     setIsSaved(!isSaved);
-    // TODO: Integrate with backend to save job (e.g., using axiosSecure)
   };
 
   const containerVariants = {
@@ -295,7 +294,7 @@ const JobDetailsPage = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-7xl">
         {/* Back to Jobs Link */}
         <Link
           to="/jobs"
@@ -309,214 +308,206 @@ const JobDetailsPage = () => {
           Back to Jobs
         </Link>
 
-        {/* Job Details Card */}
-        <Card
-          className={`overflow-visible ${
-            isDarkMode
-              ? "bg-gray-800 border-gray-700"
-              : "bg-white border-gray-200"
-          }`}
-        >
-          <div className="p-8">
-            {/* Header */}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h1
-                  className={`text-3xl font-bold ${
-                    isDarkMode ? "text-gray-100" : "text-gray-900"
-                  }`}
-                >
-                  {job.title}
-                </h1>
-                <div
-                  className={`flex items-center mt-2 ${
-                    isDarkMode ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  <FaBuilding className="mr-2" />
-                  <span>{job.company}</span>
-                </div>
-              </div>
-              <button
-                onClick={toggleSaved}
-                className={`${
-                  isDarkMode
-                    ? "text-gray-400 hover:text-yellow-400"
-                    : "text-gray-400 hover:text-yellow-500"
-                } transition-colors`}
-              >
-                {isSaved ? (
-                  <FaStar
-                    className={`w-8 h-8 ${
-                      isDarkMode ? "text-yellow-400" : "text-yellow-500"
-                    }`}
-                  />
-                ) : (
-                  <FaRegStar className="w-8 h-8" />
-                )}
-              </button>
-            </div>
-
-            {/* Job Metadata */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div
-                className={`flex items-center ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                <FaMapMarkerAlt className="mr-2" />
-                <span>{job.location}</span>
-              </div>
-              <div
-                className={`flex items-center ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                <FaClock className="mr-2" />
-                <span>{job.type}</span>
-              </div>
-              <div
-                className={`flex items-center ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                <FaBriefcase className="mr-2" />
-                <span>{job.remote ? "Remote" : "On-site"}</span>
-              </div>
-              <div
-                className={`flex items-center ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                <span
-                  className={`font-medium ${
-                    isDarkMode ? "text-primary-400" : "text-primary-600"
-                  }`}
-                >
-                  {job.salary}
-                </span>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="mb-6">
-              <h2
-                className={`text-xl font-semibold mb-3 ${
-                  isDarkMode ? "text-gray-200" : "text-gray-800"
-                }`}
-              >
-                Job Description
-              </h2>
-              <p
-                className={`leading-relaxed ${
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
-                }`}
-              >
-                {job.description}
-              </p>
-            </div>
-
-            {/* Responsibilities */}
-            <div className="mb-6">
-              <h2
-                className={`text-xl font-semibold mb-3 ${
-                  isDarkMode ? "text-gray-200" : "text-gray-800"
-                }`}
-              >
-                Responsibilities
-              </h2>
-              <ul
-                className={`list-disc pl-5 ${
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
-                }`}
-              >
-                {job.responsibilities.map((item, index) => (
-                  <li key={index} className="mb-2">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Requirements */}
-            <div className="mb-6">
-              <h2
-                className={`text-xl font-semibold mb-3 ${
-                  isDarkMode ? "text-gray-200" : "text-gray-800"
-                }`}
-              >
-                Requirements
-              </h2>
-              <ul
-                className={`list-disc pl-5 ${
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
-                }`}
-              >
-                {job.requirements.map((item, index) => (
-                  <li key={index} className="mb-2">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Skills */}
-            <div className="mb-6">
-              <h2
-                className={`text-xl font-semibold mb-3 ${
-                  isDarkMode ? "text-gray-200" : "text-gray-800"
-                }`}
-              >
-                Skills
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {job.skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className={`text-xs px-3 py-1 rounded-full ${
-                      isDarkMode
-                        ? "bg-gray-700 text-gray-200 border border-gray-600"
-                        : "bg-gray-100 text-gray-800 border border-gray-200"
-                    }`}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Info */}
-            <div
-              className={`mb-6 text-sm ${
-                isDarkMode ? "text-gray-400" : "text-gray-500"
+        {/* Main Content Grid */}
+        <div className="lg:grid lg:grid-cols-3 lg:gap-6 flex flex-col">
+          {/* Job Details */}
+          <div className="lg:col-span-2 mb-6 lg:mb-0">
+            <Card
+              className={`overflow-visible ${
+                isDarkMode
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-200"
               }`}
             >
-              <p>Posted on: {job.posted}</p>
-            </div>
+              <div className="p-8">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h1
+                      className={`text-3xl font-bold ${
+                        isDarkMode ? "text-gray-100" : "text-gray-900"
+                      }`}
+                    >
+                      {job.title}
+                    </h1>
+                    <div
+                      className={`flex items-center mt-2 ${
+                        isDarkMode ? "text-gray-400" : "text-gray-600"
+                      }`}
+                    >
+                      <FaBuilding className="mr-2" />
+                      <span>{job.company}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={toggleSaved}
+                    className={`${
+                      isDarkMode
+                        ? "text-gray-400 hover:text-yellow-400"
+                        : "text-gray-400 hover:text-yellow-500"
+                    } transition-colors`}
+                  >
+                    {isSaved ? (
+                      <FaStar
+                        className={`w-8 h-8 ${
+                          isDarkMode ? "text-yellow-400" : "text-yellow-500"
+                        }`}
+                      />
+                    ) : (
+                      <FaRegStar className="w-8 h-8" />
+                    )}
+                  </button>
+                </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-4">
-              <Button
-                variant="outline"
-                className={
-                  isDarkMode
-                    ? "border-gray-600 text-gray-300 hover:bg-gray-700"
-                    : ""
-                }
-              >
-                Share Job
-              </Button>
-              <Button
-                variant="primary"
-                className={
-                  isDarkMode ? "bg-primary-500 hover:bg-primary-600" : ""
-                }
-              >
-                Apply Now
-              </Button>
-            </div>
+                {/* Job Metadata */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div
+                    className={`flex items-center ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    <FaMapMarkerAlt className="mr-2" />
+                    <span>{job.location}</span>
+                  </div>
+                  <div
+                    className={`flex items-center ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    <FaClock className="mr-2" />
+                    <span>{job.type}</span>
+                  </div>
+                  <div
+                    className={`flex items-center ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    <FaBriefcase className="mr-2" />
+                    <span>{job.remote ? "Remote" : "On-site"}</span>
+                  </div>
+                  <div
+                    className={`flex items-center ${
+                      isDarkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    <span
+                      className={`font-medium ${
+                        isDarkMode ? "text-primary-400" : "text-primary-600"
+                      }`}
+                    >
+                      {job.salary}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="mb-6">
+                  <h2
+                    className={`text-xl font-semibold mb-3 ${
+                      isDarkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    Job Description
+                  </h2>
+                  <p
+                    className={`leading-relaxed ${
+                      isDarkMode ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    {job.description}
+                  </p>
+                </div>
+
+                {/* Responsibilities */}
+                <div className="mb-6">
+                  <h2
+                    className={`text-xl font-semibold mb-3 ${
+                      isDarkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    Responsibilities
+                  </h2>
+                  <ul
+                    className={`list-disc pl-5 ${
+                      isDarkMode ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    {job.responsibilities.map((item, index) => (
+                      <li key={index} className="mb-2">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Requirements */}
+                <div className="mb-6">
+                  <h2
+                    className={`text-xl font-semibold mb-3 ${
+                      isDarkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    Requirements
+                  </h2>
+                  <ul
+                    className={`list-disc pl-5 ${
+                      isDarkMode ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    {job.requirements.map((item, index) => (
+                      <li key={index} className="mb-2">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Skills */}
+                <div className="mb-6">
+                  <h2
+                    className={`text-xl font-semibold mb-3 ${
+                      isDarkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    Skills
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {job.skills.map((skill, index) => (
+                      <span
+                        key={index}
+                        className={`text-xs px-3 py-1 rounded-full ${
+                          isDarkMode
+                            ? "bg-gray-700 text-gray-200 border border-gray-600"
+                            : "bg-gray-100 text-gray-800 border border-gray-200"
+                        }`}
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Additional Info */}
+                <div
+                  className={`mb-6 text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  <p>Posted on: {job.posted}</p>
+                </div>
+              </div>
+            </Card>
           </div>
-        </Card>
+
+          {/* Apply Section */}
+          <div className="lg:col-span-1">
+            <ApplySection
+              job={job}
+              isDarkMode={isDarkMode}
+              isApplied={isApplied}
+            />
+          </div>
+        </div>
       </div>
     </motion.div>
   );
