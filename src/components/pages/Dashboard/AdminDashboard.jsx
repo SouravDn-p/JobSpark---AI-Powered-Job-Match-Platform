@@ -3,93 +3,157 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Card from "../common/Card";
 import Button from "../common/Button";
-import JobCard from "../jobs/JobCard";
 import LoadingSpinner from "../common/LoadingSpinner";
 import {
+  FaUsers,
   FaBriefcase,
-  FaRegListAlt,
-  FaChartLine,
-  FaUserTie,
-  FaCheck,
-  FaRegClock,
   FaRegFileAlt,
+  FaChartBar,
+  FaCog,
+  FaPlus,
 } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
-import useJobs from "../../hooks/useJobs";
-import AdminDashboard from "./AdminDashboard";
 
-const DashboardPage = () => {
-  const { jobs } = useJobs();
-  const { currentUser, isDarkMode, dbUser } = useAuth();
-  const [applications, setApplications] = useState([]);
-  const [applicationStats, setApplicationStats] = useState({
-    applied: 0,
-    inProgress: 0,
-    interviews: 0,
-    offers: 0,
-    rejected: 0,
+// Mock data
+const mockUsers = [
+  {
+    id: "u1",
+    name: "John Doe",
+    email: "john.doe@example.com",
+    role: "user",
+    createdAt: "2025-05-15T10:00:00Z",
+  },
+  {
+    id: "u2",
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    role: "user",
+    createdAt: "2025-05-14T12:00:00Z",
+  },
+  {
+    id: "u3",
+    name: "Alice Johnson",
+    email: "alice.johnson@example.com",
+    role: "admin",
+    createdAt: "2025-05-13T09:00:00Z",
+  },
+  {
+    id: "u4",
+    name: "Bob Brown",
+    email: "bob.brown@example.com",
+    role: "user",
+    createdAt: "2025-05-12T15:00:00Z",
+  },
+];
+
+const mockJobs = [
+  {
+    id: "j1",
+    title: "Senior AI Engineer",
+    company: "Tech Corp",
+    status: "active",
+    createdAt: "2025-05-16T08:00:00Z",
+  },
+  {
+    id: "j2",
+    title: "Data Scientist",
+    company: "Data Inc",
+    status: "active",
+    createdAt: "2025-05-15T14:00:00Z",
+  },
+  {
+    id: "j3",
+    title: "ML Researcher",
+    company: "AI Labs",
+    status: "inactive",
+    createdAt: "2025-05-14T11:00:00Z",
+  },
+  {
+    id: "j4",
+    title: "Backend Developer",
+    company: "Cloud Solutions",
+    status: "active",
+    createdAt: "2025-05-13T16:00:00Z",
+  },
+];
+
+const mockApplications = [
+  {
+    id: "a1",
+    userId: "u1",
+    jobId: "j1",
+    status: "Applied",
+    createdAt: "2025-05-16T09:00:00Z",
+  },
+  {
+    id: "a2",
+    userId: "u2",
+    jobId: "j2",
+    status: "Interview",
+    createdAt: "2025-05-15T10:00:00Z",
+  },
+  {
+    id: "a3",
+    userId: "u3",
+    jobId: "j3",
+    status: "Offer",
+    createdAt: "2025-05-14T12:00:00Z",
+  },
+];
+
+const AdminDashboard = () => {
+  const { isDarkMode, dbUser } = useAuth();
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalJobs: 0,
+    totalApplications: 0,
+    activeJobs: 0,
   });
+  const [recentUsers, setRecentUsers] = useState([]);
+  const [recentJobs, setRecentJobs] = useState([]);
   const [dashboardLoading, setDashboardLoading] = useState(true);
-  const [matchedJobs, setMatchedJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadDashboardData = async () => {
+    const loadAdminData = async () => {
       try {
         setDashboardLoading(true);
-        setLoading(true);
 
-        // Use dbUser.skills for job matching
-        const userSkills = dbUser?.profile?.skills || [];
-        let filteredJobs = jobs;
-        if (userSkills.length > 0) {
-          filteredJobs = jobs.filter((job) =>
-            job.skills.some((skill) => userSkills.includes(skill))
-          );
-        }
+        // Use mock data
+        const users = mockUsers;
+        const jobs = mockJobs;
+        const applications = mockApplications;
 
-        // Add mock matchScore to jobs (since dbUser doesn't provide matchScore)
-        const jobsWithScore = filteredJobs.slice(0, 3).map((job, index) => ({
-          ...job,
-          matchScore: 95 - index * 5, // Mock scores: 95, 90, 85
-        }));
-        setMatchedJobs(jobsWithScore);
-
-        // Set applications from dbUser
-        setApplications(dbUser?.applications || []);
-
-        // Set application stats from dbUser
-        setApplicationStats({
-          applied: dbUser?.applicationStats?.applied || 0,
-          inProgress: dbUser?.applicationStats?.inProgress || 0,
-          interviews: dbUser?.applicationStats?.interviews || 0,
-          offers: dbUser?.applicationStats?.offers || 0,
-          rejected: dbUser?.applicationStats?.rejected || 0,
+        // Update stats
+        setStats({
+          totalUsers: users.length,
+          totalJobs: jobs.length,
+          totalApplications: applications.length,
+          activeJobs: jobs.filter((job) => job.status === "active").length,
         });
 
-        setLoading(false);
+        // Get recent users (last 3 registered)
+        setRecentUsers(
+          users
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3)
+        );
+
+        // Get recent jobs (last 3 posted)
+        setRecentJobs(
+          jobs
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3)
+        );
+
         setDashboardLoading(false);
       } catch (error) {
-        console.error("Error loading dashboard data:", error);
+        console.error("Error loading admin dashboard data:", error);
         setDashboardLoading(false);
-        setLoading(false);
       }
     };
 
-    loadDashboardData();
-  }, [currentUser, dbUser]);
-
-  // Status labels and colors for application status
-  const statusConfig = {
-    Applied: { label: "Applied", color: "bg-blue-100 text-blue-800" },
-    "In Progress": {
-      label: "In Progress",
-      color: "bg-yellow-100 text-yellow-800",
-    },
-    Interview: { label: "Interview", color: "bg-purple-100 text-purple-800" },
-    Offer: { label: "Offer", color: "bg-green-100 text-green-800" },
-    Rejected: { label: "Rejected", color: "bg-red-100 text-red-800" },
-  };
+    loadAdminData();
+  }, []);
 
   // Format date string
   const formatDate = (dateString) => {
@@ -102,25 +166,6 @@ const DashboardPage = () => {
     });
   };
 
-  // Calculate profile completion percentage
-  const calculateProfileCompletion = () => {
-    const fields = [
-      dbUser?.profile?.headline,
-      dbUser?.profile?.bio,
-      dbUser?.profile?.location,
-      dbUser?.profile?.skills?.length > 0,
-      dbUser?.profile?.experience?.length > 0,
-      dbUser?.profile?.education?.length > 0,
-      dbUser?.profile?.jobPreferences?.jobTypes?.length > 0,
-      dbUser?.profile?.jobPreferences?.locations?.length > 0,
-      dbUser?.profile?.jobPreferences?.salary?.min,
-      dbUser?.profile?.jobPreferences?.salary?.max,
-      dbUser?.profile?.jobPreferences?.remote !== null,
-    ];
-    const completedFields = fields.filter(Boolean).length;
-    return Math.round((completedFields / fields.length) * 100);
-  };
-
   if (dashboardLoading) {
     return (
       <div
@@ -128,13 +173,9 @@ const DashboardPage = () => {
           isDarkMode ? "bg-gray-900" : "bg-gray-50"
         }`}
       >
-        <LoadingSpinner size="large" text="Loading your dashboard..." />
+        <LoadingSpinner size="large" text="Loading admin dashboard..." />
       </div>
     );
-  }
-
-  if (dbUser?.role == "admin") {
-    return <AdminDashboard />;
   }
 
   return (
@@ -147,14 +188,14 @@ const DashboardPage = () => {
         {/* Welcome header */}
         <div className="mb-8">
           <h1 className="text-3xl font-semibold">
-            Welcome, {dbUser?.name || currentUser?.name || "User"}
+            Admin Dashboard, {dbUser?.name || "Admin"}
           </h1>
           <p
             className={`text-sm ${
               isDarkMode ? "text-gray-400" : "text-gray-600"
             }`}
           >
-            Here's what's happening with your job search
+            Manage users, jobs, and applications
           </p>
         </div>
 
@@ -180,7 +221,7 @@ const DashboardPage = () => {
                       : "bg-blue-100 text-blue-800"
                   }`}
                 >
-                  <FaRegListAlt className="h-5 w-5" />
+                  <FaUsers className="h-5 w-5" />
                 </div>
                 <div className="ml-4">
                   <h3
@@ -188,11 +229,9 @@ const DashboardPage = () => {
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    Total Applications
+                    Total Users
                   </h3>
-                  <p className="text-2xl font-semibold">
-                    {applications.length}
-                  </p>
+                  <p className="text-2xl font-semibold">{stats.totalUsers}</p>
                 </div>
               </div>
             </Card>
@@ -214,11 +253,11 @@ const DashboardPage = () => {
                 <div
                   className={`p-3 rounded-full ${
                     isDarkMode
-                      ? "bg-yellow-900 text-yellow-400"
-                      : "bg-yellow-100 text-yellow-800"
+                      ? "bg-green-900 text-green-400"
+                      : "bg-green-100 text-green-800"
                   }`}
                 >
-                  <FaRegClock className="h-5 w-5" />
+                  <FaBriefcase className="h-5 w-5" />
                 </div>
                 <div className="ml-4">
                   <h3
@@ -226,11 +265,9 @@ const DashboardPage = () => {
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    Interviews
+                    Total Jobs
                   </h3>
-                  <p className="text-2xl font-semibold">
-                    {applicationStats.interviews}
-                  </p>
+                  <p className="text-2xl font-semibold">{stats.totalJobs}</p>
                 </div>
               </div>
             </Card>
@@ -252,11 +289,11 @@ const DashboardPage = () => {
                 <div
                   className={`p-3 rounded-full ${
                     isDarkMode
-                      ? "bg-green-900 text-green-400"
-                      : "bg-green-100 text-green-800"
+                      ? "bg-yellow-900 text-yellow-400"
+                      : "bg-yellow-100 text-yellow-800"
                   }`}
                 >
-                  <FaCheck className="h-5 w-5" />
+                  <FaRegFileAlt className="h-5 w-5" />
                 </div>
                 <div className="ml-4">
                   <h3
@@ -264,10 +301,10 @@ const DashboardPage = () => {
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    Offers
+                    Total Applications
                   </h3>
                   <p className="text-2xl font-semibold">
-                    {applicationStats.offers}
+                    {stats.totalApplications}
                   </p>
                 </div>
               </div>
@@ -294,7 +331,7 @@ const DashboardPage = () => {
                       : "bg-purple-100 text-purple-800"
                   }`}
                 >
-                  <FaChartLine className="h-5 w-5" />
+                  <FaChartBar className="h-5 w-5" />
                 </div>
                 <div className="ml-4">
                   <h3
@@ -302,28 +339,9 @@ const DashboardPage = () => {
                       isDarkMode ? "text-gray-400" : "text-gray-500"
                     }`}
                   >
-                    Application Rate
+                    Active Jobs
                   </h3>
-                  <p className="text-2xl font-semibold">
-                    {(() => {
-                      const {
-                        applied,
-                        inProgress,
-                        interviews,
-                        offers,
-                        rejected,
-                      } = applicationStats;
-                      const totalApplications =
-                        applied + inProgress + interviews + offers + rejected;
-                      const activeApplications =
-                        inProgress + interviews + offers;
-                      return totalApplications > 0
-                        ? `${Math.round(
-                            (activeApplications / totalApplications) * 100
-                          )}%`
-                        : "0%";
-                    })()}
-                  </p>
+                  <p className="text-2xl font-semibold">{stats.activeJobs}</p>
                 </div>
               </div>
             </Card>
@@ -331,7 +349,7 @@ const DashboardPage = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Top matches section */}
+          {/* Recent Users Section */}
           <div className="lg:col-span-2">
             <motion.div
               initial={{ opacity: 0 }}
@@ -355,15 +373,15 @@ const DashboardPage = () => {
                       isDarkMode ? "text-gray-200" : "text-gray-800"
                     }`}
                   >
-                    <FaBriefcase
+                    <FaUsers
                       className={`mr-2 ${
                         isDarkMode ? "text-blue-400" : "text-blue-600"
                       }`}
                     />
-                    Top AI Job Matches
+                    Recent Users
                   </h2>
                   <Link
-                    to="/recommendations"
+                    to="/admin/users"
                     className={`text-sm font-medium ${
                       isDarkMode
                         ? "text-blue-400 hover:text-blue-300"
@@ -373,68 +391,65 @@ const DashboardPage = () => {
                     View all
                   </Link>
                 </div>
-                <div className="p-6">
-                  {loading ? (
-                    <div className="flex justify-center py-8">
-                      <LoadingSpinner text="Finding your matches..." />
-                    </div>
-                  ) : matchedJobs.length > 0 ? (
-                    <div className="space-y-4">
-                      {matchedJobs.map((job) => (
-                        <JobCard
-                          key={job.id}
-                          job={job}
-                          matchScore={job.matchScore}
-                          showMatchScore={true}
-                          isDarkMode={isDarkMode}
-                        />
-                      ))}
-                      <div className="mt-4 text-center">
-                        <Button
-                          to="/matches"
-                          variant="outline"
-                          className={`animate__animated animate__zoomIn ${
+                <div className="p-4">
+                  {recentUsers.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentUsers.map((user) => (
+                        <div
+                          key={user.id}
+                          className={`2 border rounded-lg p-4 hover:shadow-sm transition-shadow ${
                             isDarkMode
-                              ? "border-gray-600 text-gray-200 hover:bg-gray-700"
-                              : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                              ? "bg-gray-800 border-gray-700"
+                              : "bg-white border-gray-200"
                           }`}
                         >
-                          View All Matches
-                        </Button>
-                      </div>
+                          <div className="flex justify-between">
+                            <div>
+                              <h3
+                                className={`font-medium ${
+                                  isDarkMode ? "text-gray-200" : "text-gray-900"
+                                }`}
+                              >
+                                {user.name}
+                              </h3>
+                              <p
+                                className={`text-sm ${
+                                  isDarkMode ? "text-gray-400" : "text-gray-600"
+                                }`}
+                              >
+                                {user.email}
+                              </p>
+                            </div>
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${
+                                user.role === "admin"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
+                              {user.role.charAt(0).toUpperCase() +
+                                user.role.slice(1)}
+                            </span>
+                          </div>
+                          <div
+                            className={`mt-2 text-xs ${
+                              isDarkMode ? "text-gray-500" : "text-gray-500"
+                            }`}
+                          >
+                            Registered: {formatDate(user.createdAt)}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <FaUserTie
-                        className={`mx-auto h-12 w-12 ${
-                          isDarkMode ? "text-gray-600" : "text-gray-400"
-                        } mb-4`}
-                      />
-                      <h3
-                        className={`text-lg font-medium ${
-                          isDarkMode ? "text-gray-200" : "text-gray-900"
-                        } mb-2`}
-                      >
-                        No matches yet
-                      </h3>
+                    <div className="text-center py-6">
                       <p
                         className={`text-sm ${
                           isDarkMode ? "text-gray-400" : "text-gray-500"
                         } mb-4`}
                       >
-                        Complete your profile to get personalized job matches
+                        No users found
                       </p>
-                      <Button
-                        to="/profile"
-                        variant="primary"
-                        className={`animate__animated animate__zoomIn ${
-                          isDarkMode
-                            ? "bg-blue-400 hover:bg-blue-500 text-white"
-                            : "bg-blue-600 hover:bg-blue-700 text-white"
-                        }`}
-                      >
-                        Update Profile
-                      </Button>
                     </div>
                   )}
                 </div>
@@ -442,7 +457,7 @@ const DashboardPage = () => {
             </motion.div>
           </div>
 
-          {/* Recent applications section */}
+          {/* Recent Jobs Section */}
           <div className="lg:col-span-1">
             <motion.div
               initial={{ opacity: 0 }}
@@ -466,15 +481,15 @@ const DashboardPage = () => {
                       isDarkMode ? "text-gray-200" : "text-gray-800"
                     }`}
                   >
-                    <FaRegFileAlt
+                    <FaBriefcase
                       className={`mr-2 ${
                         isDarkMode ? "text-blue-400" : "text-blue-600"
                       }`}
                     />
-                    Recent Applications
+                    Recent Jobs
                   </h2>
                   <Link
-                    to="#"
+                    to="/admin/jobs"
                     className={`text-sm font-medium ${
                       isDarkMode
                         ? "text-blue-400 hover:text-blue-300"
@@ -485,11 +500,11 @@ const DashboardPage = () => {
                   </Link>
                 </div>
                 <div className="p-4">
-                  {applications.length > 0 ? (
+                  {recentJobs.length > 0 ? (
                     <div className="space-y-3">
-                      {applications.map((app) => (
+                      {recentJobs.map((job) => (
                         <div
-                          key={app.applicationId}
+                          key={job.id}
                           className={`border rounded-lg p-4 hover:shadow-sm transition-shadow ${
                             isDarkMode
                               ? "bg-gray-800 border-gray-700"
@@ -503,23 +518,25 @@ const DashboardPage = () => {
                                   isDarkMode ? "text-gray-200" : "text-gray-900"
                                 }`}
                               >
-                                {app.job}
+                                {job.title}
                               </h3>
                               <p
                                 className={`text-sm ${
                                   isDarkMode ? "text-gray-400" : "text-gray-600"
                                 }`}
                               >
-                                {app.company}
+                                {job.company}
                               </p>
                             </div>
                             <span
                               className={`text-xs px-2 py-1 rounded-full ${
-                                statusConfig[app.status]?.color ||
-                                "bg-gray-100 text-gray-800"
+                                job.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
                               }`}
                             >
-                              {statusConfig[app.status]?.label || app.status}
+                              {job.status.charAt(0).toUpperCase() +
+                                job.status.slice(1)}
                             </span>
                           </div>
                           <div
@@ -527,14 +544,7 @@ const DashboardPage = () => {
                               isDarkMode ? "text-gray-500" : "text-gray-500"
                             }`}
                           >
-                            <div>Applied: {formatDate(app.appliedDate)}</div>
-                            {app.nextStep && (
-                              <div className="mt-1">
-                                Next: {app.nextStep}
-                                {app.nextStepDate &&
-                                  ` (${formatDate(app.nextStepDate)})`}
-                              </div>
-                            )}
+                            Posted: {formatDate(job.createdAt)}
                           </div>
                         </div>
                       ))}
@@ -546,26 +556,14 @@ const DashboardPage = () => {
                           isDarkMode ? "text-gray-400" : "text-gray-500"
                         } mb-4`}
                       >
-                        You haven't applied to any jobs yet
+                        No jobs found
                       </p>
-                      <Button
-                        to="/jobs"
-                        variant="primary"
-                        size="small"
-                        className={`animate__animated animate__zoomIn ${
-                          isDarkMode
-                            ? "bg-blue-400 hover:bg-blue-500 text-white"
-                            : "bg-blue-600 hover:bg-blue-700 text-white"
-                        }`}
-                      >
-                        Browse Jobs
-                      </Button>
                     </div>
                   )}
                 </div>
               </Card>
 
-              {/* Profile completion card */}
+              {/* Admin Actions Card */}
               <Card
                 className={`mt-6 ${
                   isDarkMode
@@ -574,37 +572,42 @@ const DashboardPage = () => {
                 } text-white`}
               >
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">
-                    Complete Your Profile
-                  </h3>
+                  <h3 className="text-xl font-semibold mb-2">Admin Actions</h3>
                   <p className="mb-6 text-blue-100">
-                    A complete profile increases your chances of getting matched
-                    with the perfect job by {dbUser?.progress}%
+                    Manage platform settings and perform administrative tasks
                   </p>
-                  <div
-                    className={`w-full h-2 rounded-full ${
-                      isDarkMode ? "bg-gray-700" : "bg-gray-200"
-                    }`}
-                  >
-                    <div
-                      className={`h-2 rounded-full ${
-                        isDarkMode
-                          ? "bg-gradient-to-r from-purple-500 to-blue-500"
-                          : "bg-gradient-to-r from-blue-500 to-purple-600"
-                      }`}
-                      style={{ width: `${dbUser?.progress || 0}%` }}
-                    ></div>
+                  <div className="space-y-4">
+                    <Button
+                      to="/admin/users"
+                      variant="outline"
+                      className="border-white text-white hover:bg-white hover:bg-opacity-10 w-full"
+                    >
+                      Manage Users
+                    </Button>
+                    <Button
+                      to="/admin/jobs"
+                      variant="outline"
+                      className="border-white text-white hover:bg-white hover:bg-opacity-10 w-full"
+                    >
+                      <FaPlus className="mr-2" />
+                      Add Job
+                    </Button>
+                    <Button
+                      to="/admin/jobs"
+                      variant="outline"
+                      className="border-white text-white hover:bg-white hover:bg-opacity-10 w-full"
+                    >
+                      Manage Jobs
+                    </Button>
+                    <Button
+                      to="/admin/settings"
+                      variant="outline"
+                      className="border-white text-white hover:bg-white hover:bg-opacity-10 w-full"
+                    >
+                      <FaCog className="mr-2" />
+                      Platform Settings
+                    </Button>
                   </div>
-                  <p className="text-sm text-blue-100 mb-4">
-                    {dbUser?.progress}% Complete
-                  </p>
-                  <Button
-                    to="/profile"
-                    variant="outline"
-                    className={`animate__animated animate__zoomIn border-white text-white hover:bg-white hover:bg-opacity-10 w-full`}
-                  >
-                    Complete Profile
-                  </Button>
                 </div>
               </Card>
             </motion.div>
@@ -615,4 +618,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default AdminDashboard;

@@ -55,9 +55,8 @@ const Navbar = () => {
     if (isUserDropdownOpen) setIsUserDropdownOpen(false);
   };
 
-  // Use isDarkMode for mode toggling
   const toggleMode = () => {
-    toggleTheme(); // Call existing toggleTheme to maintain state consistency
+    toggleTheme();
   };
 
   // Close mobile menu and dropdowns when route changes
@@ -92,15 +91,14 @@ const Navbar = () => {
         to={to}
         className={cn(
           "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-          "hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600",
           isDarkMode
-            ? "dark:hover:from-gray-800 dark:hover:to-gray-700 dark:hover:text-blue-400"
-            : "",
+            ? "text-gray-200 hover:bg-blue-900/50 hover:text-blue-300"
+            : "text-gray-800 hover:bg-blue-100/50 hover:text-blue-600",
           isActive
-            ? "text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 shadow-sm"
-            : isDarkMode
-            ? "text-gray-300"
-            : "text-gray-800",
+            ? isDarkMode
+              ? "text-blue-300 bg-blue-900/50"
+              : "text-blue-600 bg-blue-100/50"
+            : "",
           className
         )}
       >
@@ -109,7 +107,6 @@ const Navbar = () => {
     );
   };
 
-  // Custom button component
   const Button = ({
     children,
     onClick,
@@ -137,8 +134,13 @@ const Navbar = () => {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-50 border-b",
-        isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+        // Sticky positioning
+        "sticky top-0 z-50",
+        // Glassy effect: semi-transparent background with blur
+        isDarkMode
+          ? "bg-gray-900/70 backdrop-blur-md border-gray-800/50"
+          : "bg-white/70 backdrop-blur-md border-gray-200/50",
+        "border-b"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,14 +151,23 @@ const Navbar = () => {
               <img
                 src={logo}
                 className={cn(
-                  "h-8 w-8 transition-all rounded-2xl duration-300 ",
-                  isDarkMode ? "text-blue-400" : "text-blue-600"
+                  "h-8 w-8 rounded-2xl transition-all duration-300",
+                  isDarkMode
+                    ? "ring-2 ring-blue-400/50"
+                    : "ring-2 ring-blue-600/50"
                 )}
                 aria-hidden="true"
-                alt="logo"
+                alt="JobSpark logo"
               />
             </div>
-            <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span
+              className={cn(
+                "ml-2 text-xl font-bold",
+                isDarkMode
+                  ? "bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
+                  : "bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              )}
+            >
               JobSpark
             </span>
           </Link>
@@ -180,10 +191,10 @@ const Navbar = () => {
                   <Button
                     onClick={toggleNotificationDropdown}
                     className={cn(
-                      "p-2 rounded-full hover:bg-blue-100",
+                      "p-2 rounded-full",
                       isDarkMode
-                        ? "text-gray-300 dark:hover:bg-gray-800"
-                        : "text-gray-800"
+                        ? "text-gray-200 hover:bg-blue-900/50"
+                        : "text-gray-800 hover:bg-blue-100/50"
                     )}
                     aria-label="Notifications"
                   >
@@ -195,15 +206,18 @@ const Navbar = () => {
                     <div
                       className={cn(
                         "absolute right-0 mt-2 w-64 rounded-lg shadow-lg py-2 z-50 border",
+                        // Glassy effect for dropdown
                         isDarkMode
-                          ? "bg-gray-800 border-gray-700"
-                          : "bg-white border-gray-200"
+                          ? "bg-gray-900/70 backdrop-blur-md border-gray-800/50"
+                          : "bg-white/70 backdrop-blur-md border-gray-200/50"
                       )}
                     >
                       <div
                         className={cn(
                           "p-2 font-medium border-b",
-                          isDarkMode ? "border-gray-700" : "border-gray-200"
+                          isDarkMode
+                            ? "border-gray-700/50"
+                            : "border-gray-200/50"
                         )}
                       >
                         Notifications
@@ -227,8 +241,8 @@ const Navbar = () => {
                     className={cn(
                       "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                       isDarkMode
-                        ? "text-gray-300 hover:bg-gray-800"
-                        : "text-gray-800 hover:bg-blue-50"
+                        ? "text-gray-200 hover:bg-blue-900/50"
+                        : "text-gray-800 hover:bg-blue-100/50"
                     )}
                     aria-expanded={isUserDropdownOpen}
                     aria-label="User menu"
@@ -237,8 +251,8 @@ const Navbar = () => {
                       className={cn(
                         "h-8 w-8 rounded-full overflow-hidden border-2",
                         isDarkMode
-                          ? "border-blue-900 bg-gradient-to-br from-blue-400 to-purple-500"
-                          : "border-blue-200 bg-gradient-to-br from-blue-400 to-purple-500"
+                          ? "border-blue-900/50 bg-gradient-to-br from-blue-400 to-purple-500"
+                          : "border-blue-200/50 bg-gradient-to-br from-blue-400 to-purple-500"
                       )}
                     >
                       {user.photoURL ? (
@@ -246,9 +260,6 @@ const Navbar = () => {
                           src={user.photoURL || "/placeholder.svg"}
                           alt={user.name}
                           className="h-full w-full object-cover"
-                          onError={(e) => {
-                            e.target.src = "https://via.placeholder.com/32";
-                          }}
                         />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center text-white font-medium">
@@ -263,9 +274,10 @@ const Navbar = () => {
                     <div
                       className={cn(
                         "absolute right-0 mt-2 w-56 rounded-lg shadow-lg py-2 z-50 border",
+                        // Glassy effect for dropdown
                         isDarkMode
-                          ? "bg-gray-800 border-gray-700"
-                          : "bg-white border-gray-200"
+                          ? "bg-gray-900/70 backdrop-blur-md border-gray-800/50"
+                          : "bg-white/70 backdrop-blur-md border-gray-200/50"
                       )}
                     >
                       <NavLink
@@ -273,8 +285,8 @@ const Navbar = () => {
                         className={cn(
                           "flex items-center gap-2 px-4 py-2 text-sm",
                           isDarkMode
-                            ? "text-gray-300 hover:bg-gray-700"
-                            : "text-gray-800 hover:bg-blue-50"
+                            ? "text-gray-200 hover:bg-blue-900/50"
+                            : "text-gray-800 hover:bg-blue-100/50"
                         )}
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
@@ -286,8 +298,8 @@ const Navbar = () => {
                         className={cn(
                           "flex items-center gap-2 px-4 py-2 text-sm",
                           isDarkMode
-                            ? "text-gray-300 hover:bg-gray-700"
-                            : "text-gray-800 hover:bg-blue-50"
+                            ? "text-gray-200 hover:bg-blue-900/50"
+                            : "text-gray-800 hover:bg-blue-100/50"
                         )}
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
@@ -297,7 +309,9 @@ const Navbar = () => {
                       <div
                         className={cn(
                           "border-t my-1",
-                          isDarkMode ? "border-gray-700" : "border-gray-200"
+                          isDarkMode
+                            ? "border-gray-700/50"
+                            : "border-gray-200/50"
                         )}
                       ></div>
                       <button
@@ -305,8 +319,8 @@ const Navbar = () => {
                         className={cn(
                           "flex w-full items-center gap-2 px-4 py-2 text-sm",
                           isDarkMode
-                            ? "text-gray-300 hover:bg-gray-700"
-                            : "text-gray-800 hover:bg-blue-50"
+                            ? "text-gray-200 hover:bg-blue-900/50"
+                            : "text-gray-800 hover:bg-blue-100/50"
                         )}
                       >
                         <LogOut className="h-4 w-4" />
@@ -321,7 +335,11 @@ const Navbar = () => {
                 <NavItem to="/login">Login</NavItem>
                 <Link
                   to="/register"
-                  className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                  className={cn(
+                    "inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white",
+                    "bg-gradient-to-r from-blue-600 to-purple-600",
+                    "hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                  )}
                 >
                   Sign Up
                 </Link>
@@ -334,8 +352,8 @@ const Navbar = () => {
               className={cn(
                 "p-2 ml-2 rounded-full",
                 isDarkMode
-                  ? "text-gray-300 hover:bg-gray-800"
-                  : "text-gray-800 hover:bg-blue-100"
+                  ? "text-gray-200 hover:bg-blue-900/50"
+                  : "text-gray-800 hover:bg-blue-100/50"
               )}
               aria-label={
                 isDarkMode ? "Switch to light mode" : "Switch to dark mode"
@@ -363,8 +381,8 @@ const Navbar = () => {
               className={cn(
                 "p-2 rounded-full",
                 isDarkMode
-                  ? "text-gray-300 hover:bg-gray-800"
-                  : "text-gray-800 hover:bg-blue-100"
+                  ? "text-gray-200 hover:bg-blue-900/50"
+                  : "text-gray-800 hover:bg-blue-100/50"
               )}
               aria-label={
                 isDarkMode ? "Switch to light mode" : "Switch to dark mode"
@@ -390,8 +408,8 @@ const Navbar = () => {
                 className={cn(
                   "px-3 py-1 text-xs border rounded-md",
                   isDarkMode
-                    ? "border-gray-700 text-gray-300 hover:bg-gray-800"
-                    : "border-gray-300 text-gray-800 hover:bg-gray-100"
+                    ? "border-gray-700/50 text-gray-200 hover:bg-blue-900/50"
+                    : "border-gray-300/50 text-gray-800 hover:bg-blue-100/50"
                 )}
               >
                 {user ? "Logout" : "Login"}
@@ -403,8 +421,8 @@ const Navbar = () => {
               className={cn(
                 "p-2 rounded-lg",
                 isDarkMode
-                  ? "text-gray-300 hover:bg-gray-800"
-                  : "text-gray-800 hover:bg-blue-100"
+                  ? "text-gray-200 hover:bg-blue-900/50"
+                  : "text-gray-800 hover:bg-blue-100/50"
               )}
               aria-expanded={isMenuOpen}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -423,13 +441,18 @@ const Navbar = () => {
       <div
         className={cn(
           "md:hidden transition-all duration-300 ease-in-out overflow-hidden",
-          isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0",
+          // Glassy effect for mobile menu
+          isDarkMode
+            ? "bg-gray-900/70 backdrop-blur-md border-gray-800/50"
+            : "bg-white/70 backdrop-blur-md border-gray-200/50",
+          "border-t"
         )}
       >
         <div
           className={cn(
-            "px-4 pt-2 pb-4 space-y-2 border-t",
-            isDarkMode ? "border-gray-700" : "border-gray-200"
+            "px-4 pt-2 pb-4 space-y-2",
+            isDarkMode ? "border-gray-700/50" : "border-gray-200/50"
           )}
         >
           <NavItem to="/jobs" className="w-full">
@@ -455,8 +478,8 @@ const Navbar = () => {
                 className={cn(
                   "flex w-full items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                   isDarkMode
-                    ? "text-gray-300 hover:text-blue-300 hover:bg-gray-800"
-                    : "text-gray-800 hover:text-blue-700 hover:bg-blue-50"
+                    ? "text-gray-200 hover:bg-blue-900/50 hover:text-blue-300"
+                    : "text-gray-800 hover:bg-blue-100/50 hover:text-blue-600"
                 )}
                 onClick={handleSignOut}
               >
@@ -471,7 +494,11 @@ const Navbar = () => {
               </NavItem>
               <Link
                 to="/register"
-                className="block w-full text-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                className={cn(
+                  "block w-full text-center px-4 py-2 rounded-lg text-sm font-medium text-white",
+                  "bg-gradient-to-r from-blue-600 to-purple-600",
+                  "hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                )}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sign Up
@@ -504,6 +531,14 @@ const Navbar = () => {
           }
           50% {
             opacity: 0.5;
+          }
+        }
+        /* Fallback for browsers without backdrop-filter support */
+        @supports not (backdrop-filter: blur(8px)) {
+          .backdrop-blur-md {
+            background: ${isDarkMode
+              ? "rgba(17, 24, 39, 0.9)"
+              : "rgba(255, 255, 255, 0.9)"};
           }
         }
       `}</style>

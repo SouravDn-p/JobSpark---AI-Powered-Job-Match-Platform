@@ -8,11 +8,16 @@ export default function Main() {
     location.pathname.includes("login") ||
     location.pathname.includes("register") ||
     location.pathname.includes("forgotPassword");
+
   return (
-    <section className="mx-auto my-auto h-screen">
-      {isLogin || <Navbar />}
+    <section className="min-h-screen flex flex-col">
+      {!isLogin && (
+        <div className="sticky top-0 z-50 bg-black">
+          <Navbar />
+        </div>
+      )}
       <Outlet />
-      {isLogin || <Footer />}
+      {!isLogin && <Footer />}
     </section>
   );
 }

@@ -10,6 +10,7 @@ import DashboardPage from "../components/pages/Dashboard/DashboardPage";
 import ProfilePage from "../components/pages/Profile/ProfilePage";
 import JobDetailsPage from "../components/pages/jobs/JobDetailsPage";
 import PrivateRoute from "./PrivateRoute";
+import AddJobPage from "../components/pages/Dashboard/admin/AddJobPage";
 
 export const router = createBrowserRouter([
   {
@@ -38,6 +39,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <DashboardPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/admin/jobs",
+        element: (
+          <PrivateRoute>
+            <AddJobPage />
           </PrivateRoute>
         ),
       },
