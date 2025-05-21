@@ -320,7 +320,7 @@ const Navbar = () => {
               <>
                 <NavItem to="/login">Login</NavItem>
                 <Link
-                  to="/signup"
+                  to="/register"
                   className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
                 >
                   Sign Up
@@ -470,7 +470,7 @@ const Navbar = () => {
                 Login
               </NavItem>
               <Link
-                to="/signup"
+                to="/register"
                 className="block w-full text-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
                 onClick={() => setIsMenuOpen(false)}
               >

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -15,6 +13,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
+import bg from "../../assets/bg.jpg";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -85,25 +84,30 @@ export default function Login() {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 p-4 transition-colors duration-300 animate__animated animate__fadeIn`}
+      className={`min-h-screen flex items-center justify-center bg-cover bg-center p-4 transition-colors duration-300 animate__animated animate__fadeIn`}
+      style={{
+        backgroundImage: `url(${bg})`,
+      }}
     >
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-sm relative">
+        {/* Background layer for better visibility */}
         <div
-          className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 ${
-            isDarkMode ? "border-gray-700" : "border-gray-200"
-          } border`}
+          className={`absolute inset-0 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm -z-10`}
+        ></div>
+        <div
+          className={`backdrop-blur-lg bg-white/40 dark:bg-gray-800/40 rounded-lg shadow-lg p-6 border border-white/30`}
         >
           {/* Header */}
-          <div className="text-center mb-6">
-            <div className="flex items-center justify-center mb-2">
-              <Briefcase className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white ml-2">
+          <div className="text-center mb-4">
+            <div className="flex items-center justify-center mb-1">
+              <Briefcase className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white ml-2">
                 JobSpark Login
               </h2>
             </div>
             <p
-              className={`text-sm ${
-                isDarkMode ? "text-gray-400" : "text-gray-600"
+              className={`text-xs ${
+                isDarkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
               Sign in to unlock AI-powered job opportunities
@@ -111,18 +115,22 @@ export default function Login() {
           </div>
 
           {user ? (
-            <div className="space-y-4 text-center">
+            <div className="space-y-3 text-center">
               <div
-                className={`p-4 rounded-lg ${
-                  isDarkMode ? "bg-gray-700" : "bg-gray-50"
+                className={`p-3 rounded-lg ${
+                  isDarkMode ? "bg-gray-700/60" : "bg-gray-50/60"
                 }`}
               >
-                <p className={isDarkMode ? "text-gray-200" : "text-gray-800"}>
+                <p
+                  className={`text-sm ${
+                    isDarkMode ? "text-gray-200" : "text-gray-800"
+                  }`}
+                >
                   Welcome, {user.displayName || user.email}
                 </p>
                 <Link
                   to="/recommendations"
-                  className="inline-flex items-center mt-2 text-sm text-blue-600 hover:text-blue-700 transition-colors"
+                  className="inline-flex items-center mt-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
                 >
                   <Sparkles className="h-4 w-4 mr-1" />
                   Explore AI Job Matches
@@ -136,10 +144,10 @@ export default function Login() {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <Loader className="w-5 h-5 animate-spin" />
+                  <Loader className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <LogOut className="w-5 h-5" />
+                    <LogOut className="w-4 h-4" />
                     Sign Out
                   </>
                 )}
@@ -148,12 +156,12 @@ export default function Login() {
           ) : (
             <>
               {/* Form */}
-              <form onSubmit={handleEmailPasswordLogin} className="space-y-6">
+              <form onSubmit={handleEmailPasswordLogin} className="space-y-4">
                 <div>
                   <label
-                    className={`block text-sm font-medium ${
+                    className={`block text-xs font-medium ${
                       isDarkMode ? "text-gray-200" : "text-gray-700"
-                    } mb-2`}
+                    } mb-1`}
                   >
                     Email Address
                   </label>
@@ -163,15 +171,11 @@ export default function Login() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
-                      className={`w-full px-4 py-3 pl-12 rounded-lg border ${
-                        isDarkMode
-                          ? "bg-gray-700 border-gray-600 text-gray-200"
-                          : "bg-white border-gray-300 text-gray-900"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+                      className={`w-full px-3 py-2 pl-10 text-sm rounded-lg border border-white/30 bg-white/20 dark:bg-gray-800/20 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                       required
                     />
                     <Mail
-                      className={`w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                      className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 ${
                         isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     />
@@ -180,9 +184,9 @@ export default function Login() {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium ${
+                    className={`block text-xs font-medium ${
                       isDarkMode ? "text-gray-200" : "text-gray-700"
-                    } mb-2`}
+                    } mb-1`}
                   >
                     Password
                   </label>
@@ -192,41 +196,37 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className={`w-full px-4 py-3 pl-12 pr-12 rounded-lg border ${
-                        isDarkMode
-                          ? "bg-gray-700 border-gray-600 text-gray-200"
-                          : "bg-white border-gray-300 text-gray-900"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+                      className={`w-full px-3 py-2 pl-10 pr-10 text-sm rounded-lg border border-white/30 bg-white/20 dark:bg-gray-800/20 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                       required
                     />
                     <Lock
-                      className={`w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                      className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 ${
                         isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${
+                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
                         isDarkMode
                           ? "text-gray-400 hover:text-gray-300"
                           : "text-gray-500 hover:text-gray-600"
                       }`}
                     >
                       {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
+                        <EyeOff className="w-4 h-4" />
                       ) : (
-                        <Eye className="w-5 h-5" />
+                        <Eye className="w-4 h-4" />
                       )}
                     </button>
                   </div>
-                  <div className="flex justify-end mt-2">
+                  <div className="flex justify-end mt-1">
                     <button
                       type="button"
                       onClick={() =>
                         navigate("/forgot-password", { state: { email } })
                       }
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       Forgot password?
                     </button>
@@ -235,13 +235,13 @@ export default function Login() {
 
                 <button
                   type="submit"
-                  className={`w-full px-4 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors animate__animated animate__zoomIn ${
+                  className={`w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors animate__animated animate__zoomIn ${
                     isLoading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <Loader className="w-5 h-5 animate-spin mx-auto" />
+                    <Loader className="w-4 h-4 animate-spin mx-auto" />
                   ) : (
                     "Sign In"
                   )}
@@ -251,52 +251,52 @@ export default function Login() {
               {/* Alerts */}
               {error && (
                 <div
-                  className={`mt-4 p-4 rounded-lg border animate__animated animate__fadeIn ${
+                  className={`mt-3 p-3 rounded-lg border animate__animated animate__fadeIn ${
                     isDarkMode
-                      ? "bg-red-900/30 border-red-800 text-red-400"
-                      : "bg-red-50 border-red-200 text-red-600"
+                      ? "bg-red-900/40 border-red-800 text-red-400"
+                      : "bg-red-50/60 border-red-200 text-red-600"
                   }`}
                 >
-                  <p className="text-sm text-center">{error}</p>
+                  <p className="text-xs text-center">{error}</p>
                 </div>
               )}
               {success && (
                 <div
-                  className={`mt-4 p-4 rounded-lg border animate__animated animate__fadeIn ${
+                  className={`mt-3 p-3 rounded-lg border animate__animated animate__fadeIn ${
                     isDarkMode
-                      ? "bg-green-900/30 border-green-800 text-green-400"
-                      : "bg-green-50 border-green-200 text-green-600"
+                      ? "bg-green-900/40 border-green-800 text-green-400"
+                      : "bg-green-50/60 border-green-200 text-green-600"
                   }`}
                 >
-                  <p className="text-sm text-center">{success}</p>
+                  <p className="text-xs text-center">{success}</p>
                 </div>
               )}
 
-              {/* Google Sign-In */}
-              <div className="relative my-6">
+              {/* Google Sign-In Divider */}
+              <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
                   <div
                     className={`w-full border-t ${
-                      isDarkMode ? "border-gray-600" : "border-gray-300"
+                      isDarkMode ? "border-gray-600/50" : "border-gray-300/50"
                     }`}
                   />
-                  <div
-                    className={`relative flex justify-center text-sm ${
-                      isDarkMode
-                        ? "bg-gray-800 text-gray-400"
-                        : "bg-white text-gray-500"
-                    }`}
-                  >
-                    <span className="px-2">Or continue with</span>
-                  </div>
+                </div>
+                <div
+                  className={`relative flex justify-center text-xs font-medium ${
+                    isDarkMode
+                      ? "bg-gray-800/50 text-gray-300 border-gray-600/50"
+                      : "bg-white/50 text-gray-600 border-gray-300/50"
+                  } backdrop-blur-sm border rounded-full px-4 py-1`}
+                >
+                  <span>Or continue with</span>
                 </div>
               </div>
 
               <button
-                className={`w-full px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium border rounded-lg animate__animated animate__zoomIn ${
+                className={`w-full px-4 py-2 flex items-center justify-center gap-2 text-sm font-medium border rounded-lg animate__animated animate__zoomIn ${
                   isDarkMode
-                    ? "bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600"
-                    : "bg-white border-gray-300 text-gray-700 hover:bg-gray-100"
+                    ? "bg-gray-700/40 border-gray-600 text-gray-200 hover:bg-gray-600/40"
+                    : "bg-white/40 border-gray-300 text-gray-700 hover:bg-gray-100/40"
                 } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                   isLoading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
@@ -304,13 +304,13 @@ export default function Login() {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <Loader className="w-5 h-5 animate-spin" />
+                  <Loader className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
                     <img
                       src="https://www.google.com/favicon.ico"
                       alt="Google"
-                      className="w-5 h-5"
+                      className="w-4 h-4"
                     />
                     Sign in with Google
                   </>
@@ -319,7 +319,7 @@ export default function Login() {
 
               {/* Sign Up Link */}
               <p
-                className={`mt-6 text-center text-sm ${
+                className={`mt-4 text-center text-xs ${
                   isDarkMode ? "text-gray-300" : "text-gray-600"
                 }`}
               >
@@ -337,9 +337,9 @@ export default function Login() {
           {/* Home Link */}
           <NavLink
             to="/"
-            className={`w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors animate__animated animate__zoomIn`}
+            className={`w-full mt-3 px-4 py-2 flex items-center justify-center gap-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors animate__animated animate__zoomIn`}
           >
-            <Briefcase className="w-5 h-5" />
+            <Briefcase className="w-4 h-4" />
             Back to Home
           </NavLink>
         </div>

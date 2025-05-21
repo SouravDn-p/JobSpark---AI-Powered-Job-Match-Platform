@@ -76,7 +76,7 @@ const Home = () => {
                 ) : (
                   <>
                     <Link
-                      to="/signup"
+                      to="/register"
                       className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
                     >
                       Get Started
@@ -318,7 +318,7 @@ const Home = () => {
           </h2>
           <div className="mt-8 flex gap-4 flex-wrap lg:mt-0">
             <Link
-              to={user ? "/recommendations" : "/signup"}
+              to={user ? "/recommendations" : "/register"}
               className="inline-flex items-center px-5 py-3 bg-white text-blue-700 font-medium rounded-lg hover:bg-gray-100 transition-colors"
             >
               {user ? "Get Recommendations" : "Get Started"}

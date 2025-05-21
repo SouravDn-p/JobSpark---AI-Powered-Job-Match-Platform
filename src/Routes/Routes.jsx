@@ -9,6 +9,7 @@ import Recommendations from "../components/pages/recommendation/Recommendations"
 import DashboardPage from "../components/pages/Dashboard/DashboardPage";
 import ProfilePage from "../components/pages/Profile/ProfilePage";
 import JobDetailsPage from "../components/pages/jobs/JobDetailsPage";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -34,7 +35,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <DashboardPage />,
+        element: (
+          <PrivateRoute>
+            <DashboardPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/profilePage",
@@ -45,7 +50,7 @@ export const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "/signup",
+        path: "/register",
         element: <Register />,
       },
     ],

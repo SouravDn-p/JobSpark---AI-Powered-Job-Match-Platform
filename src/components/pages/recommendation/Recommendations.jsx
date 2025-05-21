@@ -4,6 +4,7 @@ import JobCard from "../JobCard";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useJobs from "../../hooks/useJobs";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 export default function Recommendations() {
   const { dbUser, isDarkMode } = useAuth();
@@ -11,49 +12,17 @@ export default function Recommendations() {
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const fetchRecommendations = () => {
+  const axiosSecure = useAxiosSecure();
+  const fetchRecommendations = async () => {
     setIsLoading(true);
     setError(null);
 
     // Simulate async processing with a minimum delay for visual feedback
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
-        let recommendedJobs = [...jobs];
-
-        // Recommendation logic based on dbUser.profile.skills
-        const userSkills = dbUser?.profile?.skills || [];
-        if (userSkills.length > 0) {
-          recommendedJobs = recommendedJobs.map((job) => {
-            const matchedSkills = job.skills.filter((skill) =>
-              userSkills.includes(skill)
-            );
-            const matchScore = (matchedSkills.length / job.skills.length) * 100;
-            const isApplied = dbUser?.applications?.some(
-              (app) => app.jobId === job._id
-            );
-            return { ...job, matchScore: Math.round(matchScore), isApplied };
-          });
-
-          // Sort by matchScore (descending), then randomize equal scores
-          recommendedJobs.sort((a, b) => {
-            const scoreDiff = (b.matchScore || 0) - (a.matchScore || 0);
-            return scoreDiff !== 0 ? scoreDiff : Math.random() - 0.5;
-          });
-        } else {
-          // If no skills, shuffle jobs to simulate new recommendations
-          recommendedJobs = recommendedJobs
-            .map((job) => ({
-              ...job,
-              matchScore: 0,
-              isApplied: dbUser?.applications?.some(
-                (app) => app.jobId === job._id
-              ),
-            }))
-            .sort(() => Math.random() - 0.5);
-        }
-
-        setRecommendations(recommendedJobs);
+        const response = await axiosSecure.get("/recommendations");
+        console.log("response ai data", response.data);
+        setRecommendations(response.data);
       } catch (err) {
         console.error("Error processing recommendations:", err);
         setError(
@@ -260,16 +229,17 @@ export default function Recommendations() {
           <div className="space-y-6">
             {recommendations.map((job, index) => (
               <div
-                key={job._id || job.id}
+                key={job.jobDetails._id}
                 className={`animate__animated animate__fadeInUp animate__delay-${
                   (index % 5) + 1
                 }s`}
               >
+                {console.log(job)}
                 <JobCard
-                  job={job}
+                  job={job.jobDetails}
                   isRecommended={true}
-                  matchScore={job.matchScore}
-                  isApplied={job.isApplied}
+                  matchScore={job.match_score}
+                  isApplied={job.jobDetails.isApplied}
                 />
               </div>
             ))}

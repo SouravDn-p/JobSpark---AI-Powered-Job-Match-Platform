@@ -359,7 +359,7 @@ const DashboardPage = () => {
                     Top AI Job Matches
                   </h2>
                   <Link
-                    to="/matches"
+                    to="/recommendations"
                     className={`text-sm font-medium ${
                       isDarkMode
                         ? "text-blue-400 hover:text-blue-300"
