@@ -90,8 +90,6 @@ export default function AddJobPage() {
       skills: formData.skills.filter((item) => item.trim()),
     };
 
-    console.log("Job data submitted:", cleanedData);
-
     // Show success message
     setFormSubmitted(true);
 

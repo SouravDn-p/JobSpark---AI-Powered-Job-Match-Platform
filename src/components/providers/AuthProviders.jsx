@@ -54,7 +54,6 @@ const AuthProvider = ({ children }) => {
         .get(`/user/${user?.email}`)
         .then((res) => {
           setDbUser(res.data);
-          console.log("res.data", res.data);
           setLoader(false);
         })
         .catch((error) => {

@@ -92,7 +92,6 @@ const ApplySection = ({ job, isDarkMode, isApplied }) => {
       );
 
       if (response.data.success) {
-        console.log("result", response);
         window.scrollTo({ top: 0, behavior: "smooth" });
         alert("Application submitted successfully!");
         setMotivation("");
@@ -106,7 +105,7 @@ const ApplySection = ({ job, isDarkMode, isApplied }) => {
   };
 
   const handleShare = () => {
-    console.log(`Sharing job: ${job.title}`);
+    // console.log(`Sharing job: ${job.title}`);
   };
 
   // const isApplied = applications.some(

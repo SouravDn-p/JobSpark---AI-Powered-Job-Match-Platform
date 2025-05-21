@@ -70,7 +70,6 @@ const ProfilePage = () => {
 
   useEffect(() => {
     // setFormData(dbUser);
-    console.log(dbUser?.profile);
     if (dbUser?.profile) {
       setFormData((prevData) => ({
         ...prevData,
@@ -217,13 +216,11 @@ const ProfilePage = () => {
     if (!validateForm()) return;
 
     try {
-      console.log("formData", formData);
       const response = await axiosSecure.patch(`/user/${dbUser?.email}`, {
         profile: formData,
       });
       if (response.data.success) {
         setDbUser(response.data.user);
-        console.log("result", response);
         setShowSuccessAnimation(true);
         setTimeout(() => {
           setShowSuccessAnimation(false);

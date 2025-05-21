@@ -4,15 +4,15 @@ import JobCard from "../JobCard";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useJobs from "../../hooks/useJobs";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 export default function Recommendations() {
-  const { dbUser, isDarkMode } = useAuth();
+  const { dbUser, isDarkMode, user } = useAuth();
   const { jobs, jobsLoading, error: jobsError } = useJobs();
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
   const fetchRecommendations = async () => {
     setIsLoading(true);
     setError(null);
@@ -20,8 +20,9 @@ export default function Recommendations() {
     // Simulate async processing with a minimum delay for visual feedback
     setTimeout(async () => {
       try {
-        const response = await axiosSecure.get("/recommendations");
-        console.log("response ai data", response.data);
+        const response = await axiosPublic.get("/recommendations", {
+          params: { email: user?.email },
+        });
         setRecommendations(response.data);
       } catch (err) {
         console.error("Error processing recommendations:", err);
@@ -234,7 +235,6 @@ export default function Recommendations() {
                   (index % 5) + 1
                 }s`}
               >
-                {console.log(job)}
                 <JobCard
                   job={job.jobDetails}
                   isRecommended={true}

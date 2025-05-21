@@ -11,7 +11,6 @@ const useJobs = () => {
       try {
         setJobsLoading(true);
         const response = await axiosSecure.get("/jobs");
-        console.log("response.data", response.data);
         setJobs(response.data);
       } catch (err) {
         setError(err);
