@@ -139,7 +139,7 @@ const Navbar = () => {
         // Glassy effect: semi-transparent background with blur
         isDarkMode
           ? "bg-gray-900/70 backdrop-blur-md border-gray-800/50"
-          : "bg-white/70 backdrop-blur-md border-gray-200/50",
+          : "bg-gray-300 backdrop-blur-md border-gray-200/50",
         "border-b"
       )}
     >

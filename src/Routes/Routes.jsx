@@ -24,15 +24,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "/jobs",
-        element: <JobListings />,
+        element: (
+          <PrivateRoute>
+            <JobListings />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/jobs/:id",
-        element: <JobDetailsPage />,
+        element: (
+          <PrivateRoute>
+            <JobDetailsPage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/recommendations",
-        element: <Recommendations />,
+        element: (
+          <PrivateRoute>
+            <Recommendations />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/dashboard",
@@ -52,7 +64,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profilePage",
-        element: <ProfilePage />,
+        element: (
+          <PrivateRoute>
+            <ProfilePage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/login",
