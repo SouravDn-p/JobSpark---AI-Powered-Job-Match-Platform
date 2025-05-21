@@ -61,7 +61,7 @@ const ApplySection = ({ job, isDarkMode, isApplied }) => {
     }
 
     const applicationData = {
-      jobId: job.id,
+      jobId: job._id,
       job: job.title,
       company: job.company,
       companyLocation: job.location,

@@ -1,250 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Sparkles } from "lucide-react";
 import JobCard from "./JobCard";
 import FilterSidebar from "./FilterSidebar";
 import useAuth from "../hooks/useAuth";
-
-const jobData = [
-  {
-    id: "1",
-    title: "Frontend Developer",
-    company: "Tech Innovations Inc.",
-    location: "San Francisco, CA",
-    salary: "$95,000 - $120,000",
-    description:
-      "We are looking for a skilled Frontend Developer to join our dynamic team. The ideal candidate will have strong experience with React, TypeScript, and modern web development practices.",
-    responsibilities: [
-      "Develop new user-facing features",
-      "Build reusable components and libraries",
-      "Optimize applications for maximum speed and scalability",
-      "Collaborate with designers and backend developers",
-    ],
-    requirements: [
-      "Proficiency in React and TypeScript",
-      "Strong understanding of UI/UX principles",
-      "Experience with responsive design",
-      "Knowledge of modern frontend build pipelines and tools",
-    ],
-    posted: "2023-05-15",
-    type: "Full-time",
-    remote: true,
-    skills: [
-      "React",
-      "TypeScript",
-      "JavaScript",
-      "HTML",
-      "CSS",
-      "Tailwind CSS",
-    ],
-  },
-  {
-    id: "2",
-    title: "Backend Engineer",
-    company: "Data Systems LLC",
-    location: "Seattle, WA",
-    salary: "$110,000 - $140,000",
-    description:
-      "We are seeking a talented Backend Engineer to develop and maintain our server infrastructure and APIs. The ideal candidate will have experience with Node.js, databases, and API design.",
-    responsibilities: [
-      "Design and implement server-side architecture",
-      "Develop APIs and services",
-      "Optimize database performance",
-      "Ensure data security and compliance",
-    ],
-    requirements: [
-      "Experience with Node.js and Express",
-      "Knowledge of SQL and NoSQL databases",
-      "Understanding of REST API best practices",
-      "Familiarity with cloud infrastructure (AWS/Azure/GCP)",
-    ],
-    posted: "2023-05-10",
-    type: "Full-time",
-    remote: true,
-    skills: ["Node.js", "Express", "MongoDB", "SQL", "AWS", "API Design"],
-  },
-  {
-    id: "3",
-    title: "UI/UX Designer",
-    company: "Creative Solutions",
-    location: "New York, NY",
-    salary: "$85,000 - $110,000",
-    description:
-      "We are looking for a creative UI/UX Designer to create amazing user experiences. The ideal candidate should have a portfolio demonstrating their design skills.",
-    responsibilities: [
-      "Create user flows, wireframes, and prototypes",
-      "Conduct user research and testing",
-      "Collaborate with developers to implement designs",
-      "Maintain design system consistency",
-    ],
-    requirements: [
-      "Proficiency in design tools (Figma, Adobe XD)",
-      "Understanding of user-centered design principles",
-      "Ability to translate business requirements into designs",
-      "Portfolio demonstrating UI/UX work",
-    ],
-    posted: "2023-05-12",
-    type: "Full-time",
-    remote: false,
-    skills: [
-      "Figma",
-      "UI Design",
-      "UX Design",
-      "Wireframing",
-      "Prototyping",
-      "User Research",
-    ],
-  },
-  {
-    id: "4",
-    title: "Full Stack Developer",
-    company: "Nexus Technologies",
-    location: "Austin, TX",
-    salary: "$100,000 - $130,000",
-    description:
-      "We are seeking a Full Stack Developer to work on our flagship product. The ideal candidate will be comfortable working on both frontend and backend technologies.",
-    responsibilities: [
-      "Develop features across the entire stack",
-      "Optimize application performance",
-      "Implement security and data protection measures",
-      "Work with cross-functional teams to define requirements",
-    ],
-    requirements: [
-      "Experience with React and Node.js",
-      "Knowledge of database systems",
-      "Understanding of web security principles",
-      "Experience with version control and CI/CD workflows",
-    ],
-    posted: "2023-05-08",
-    type: "Full-time",
-    remote: true,
-    skills: ["React", "Node.js", "JavaScript", "TypeScript", "MongoDB", "AWS"],
-  },
-  {
-    id: "5",
-    title: "DevOps Engineer",
-    company: "Cloud Systems Inc.",
-    location: "Remote",
-    salary: "$120,000 - $150,000",
-    description:
-      "We are looking for a DevOps Engineer to help automate and maintain our infrastructure. The ideal candidate will have experience with cloud platforms and CI/CD pipelines.",
-    responsibilities: [
-      "Build and maintain CI/CD pipelines",
-      "Automate infrastructure provisioning",
-      "Monitor system performance and reliability",
-      "Implement security best practices",
-    ],
-    requirements: [
-      "Experience with cloud platforms (AWS/Azure/GCP)",
-      "Knowledge of containerization (Docker, Kubernetes)",
-      "Familiarity with infrastructure as code tools",
-      "Understanding of networking and security principles",
-    ],
-    posted: "2023-05-05",
-    type: "Full-time",
-    remote: true,
-    skills: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux"],
-  },
-  {
-    id: "6",
-    title: "Product Manager",
-    company: "Innovate Solutions",
-    location: "Chicago, IL",
-    salary: "$110,000 - $140,000",
-    description:
-      "We are seeking an experienced Product Manager to oversee the development of our digital products. The ideal candidate will have a blend of technical and business skills.",
-    responsibilities: [
-      "Define product vision and strategy",
-      "Prioritize features and create roadmaps",
-      "Conduct market research and competitive analysis",
-      "Work closely with engineering and design teams",
-    ],
-    requirements: [
-      "Previous experience in product management",
-      "Understanding of software development lifecycle",
-      "Ability to communicate with technical and non-technical stakeholders",
-      "Data-driven decision making skills",
-    ],
-    posted: "2023-05-03",
-    type: "Full-time",
-    remote: false,
-    skills: [
-      "Product Management",
-      "Agile",
-      "Roadmapping",
-      "Market Research",
-      "User Stories",
-    ],
-  },
-  {
-    id: "7",
-    title: "Data Scientist",
-    company: "Analytics Pro",
-    location: "Boston, MA",
-    salary: "$100,000 - $130,000",
-    description:
-      "We are looking for a Data Scientist to help extract insights from our data. The ideal candidate will have strong analytical skills and experience with machine learning.",
-    responsibilities: [
-      "Design and implement machine learning models",
-      "Analyze large datasets to extract insights",
-      "Develop data visualization tools",
-      "Collaborate with engineering and product teams",
-    ],
-    requirements: [
-      "Experience with Python and data science libraries",
-      "Knowledge of machine learning techniques",
-      "Statistical analysis skills",
-      "Data visualization expertise",
-    ],
-    posted: "2023-05-01",
-    type: "Full-time",
-    remote: true,
-    skills: [
-      "Python",
-      "Machine Learning",
-      "TensorFlow",
-      "Data Analysis",
-      "Statistics",
-    ],
-  },
-  {
-    id: "8",
-    title: "Mobile Developer",
-    company: "AppWorks",
-    location: "Los Angeles, CA",
-    salary: "$90,000 - $120,000",
-    description:
-      "We are seeking a Mobile Developer to create innovative applications for iOS and Android platforms. The ideal candidate will have experience with React Native.",
-    responsibilities: [
-      "Develop cross-platform mobile applications",
-      "Ensure responsiveness and performance",
-      "Collaborate with backend developers for API integration",
-      "Implement automated testing strategies",
-    ],
-    requirements: [
-      "Experience with React Native or similar frameworks",
-      "Understanding of mobile UI/UX principles",
-      "Knowledge of mobile app performance techniques",
-      "Familiarity with app deployment processes",
-    ],
-    posted: "2023-04-28",
-    type: "Full-time",
-    remote: false,
-    skills: [
-      "React Native",
-      "JavaScript",
-      "iOS",
-      "Android",
-      "Mobile Development",
-    ],
-  },
-];
+import useJobs from "../hooks/useJobs";
 
 export default function JobListings() {
+  const { jobs, loading: jobsLoading } = useJobs();
   const { isDarkMode } = useAuth();
-  const [filteredJobs, setFilteredJobs] = useState(jobData);
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+  // Initialize filteredJobs with jobs data when jobs are loaded
+  useEffect(() => {
+    if (!jobsLoading && jobs) {
+      setFilteredJobs(jobs);
+    }
+  }, [jobs, jobsLoading]);
 
   // Simulate async processing for search/filter
   const simulateAsync = (fn) => {
@@ -258,13 +32,13 @@ export default function JobListings() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
-      setFilteredJobs(jobData);
+      setFilteredJobs(jobs);
       return;
     }
 
     simulateAsync(() => {
       const query = searchQuery.toLowerCase();
-      const results = jobData.filter(
+      const results = jobs.filter(
         (job) =>
           job.title.toLowerCase().includes(query) ||
           job.company.toLowerCase().includes(query) ||
@@ -277,7 +51,7 @@ export default function JobListings() {
 
   const handleApplyFilters = (filters) => {
     simulateAsync(() => {
-      let results = [...jobData];
+      let results = [...jobs];
 
       if (filters.location) {
         results = results.filter((job) =>
@@ -320,7 +94,7 @@ export default function JobListings() {
 
   const handleClearSearch = () => {
     setSearchQuery("");
-    setFilteredJobs(jobData);
+    setFilteredJobs(jobs);
   };
 
   const toggleMobileFilter = () => {
@@ -377,12 +151,16 @@ export default function JobListings() {
           </div>
           <button
             type="submit"
-            disabled={isProcessing}
+            disabled={isProcessing || jobsLoading}
             className={`ml-3 px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-              isProcessing ? "opacity-50 cursor-not-allowed" : ""
+              isProcessing || jobsLoading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {isProcessing ? "Searching..." : "Search"}
+            {isProcessing
+              ? "Searching..."
+              : jobsLoading
+              ? "Loading..."
+              : "Search"}
           </button>
           {searchQuery && (
             <button
@@ -403,7 +181,7 @@ export default function JobListings() {
           <div className="sticky top-20 animate__animated animate__fadeInLeft">
             <FilterSidebar
               onApplyFilters={handleApplyFilters}
-              loading={isProcessing}
+              loading={isProcessing || jobsLoading}
             />
           </div>
         </div>
@@ -432,7 +210,7 @@ export default function JobListings() {
             >
               <FilterSidebar
                 onApplyFilters={handleApplyFilters}
-                loading={isProcessing}
+                loading={isProcessing || jobsLoading}
               />
             </div>
           </div>
@@ -450,20 +228,29 @@ export default function JobListings() {
             <button
               type="button"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
-              onClick={() => setFilteredJobs(jobData)}
+              onClick={() => setFilteredJobs(jobs)}
             >
               Reset Filters
             </button>
           </div>
 
           {/* Job Listings or States */}
-          {isProcessing ? (
+          {jobsLoading ? (
             <div className="flex flex-col items-center justify-center py-12 animate__animated animate__pulse animate__infinite">
               <div
                 className={`w-12 h-12 rounded-full bg-blue-400 animate-pulse mb-4`}
               ></div>
               <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
                 Loading jobs...
+              </p>
+            </div>
+          ) : isProcessing ? (
+            <div className="flex flex-col items-center justify-center py-12 animate__animated animate__pulse animate__infinite">
+              <div
+                className={`w-12 h-12 rounded-full bg-blue-400 animate-pulse mb-4`}
+              ></div>
+              <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
+                Processing filters...
               </p>
             </div>
           ) : filteredJobs.length === 0 ? (
@@ -477,7 +264,7 @@ export default function JobListings() {
               </p>
               <button
                 className="mt-4 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-                onClick={() => setFilteredJobs(jobData)}
+                onClick={() => setFilteredJobs(jobs)}
               >
                 View all jobs
               </button>
@@ -486,7 +273,7 @@ export default function JobListings() {
             <div className="space-y-6">
               {filteredJobs.map((job, index) => (
                 <div
-                  key={job.id}
+                  key={job._id}
                   className={`animate__animated animate__fadeInUp animate__delay-${
                     (index % 5) + 1
                   }s`}
