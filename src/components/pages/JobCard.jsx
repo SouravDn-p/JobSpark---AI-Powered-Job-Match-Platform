@@ -101,7 +101,7 @@ export default function JobCard({ job }) {
         {/* Actions */}
         <div className="mt-4 sm:mt-0 sm:ml-4 flex flex-col gap-2">
           <Link
-            to={`/jobs/${job.id}`}
+            to={`/jobs/${job._id}`}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           >
             View Details

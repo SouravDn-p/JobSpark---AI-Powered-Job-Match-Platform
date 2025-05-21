@@ -94,7 +94,7 @@ const JobCard = ({
       animate="animate"
       whileHover={showActions ? "hover" : {}}
     >
-      <Link to={`/jobs/${job.id}`} className="block h-full">
+      <Link to={`/jobs/${job._id}`} className="block h-full">
         <div className="p-6">
           {/* Header with Title and Company */}
           <div className="flex justify-between items-start mb-3">

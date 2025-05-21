@@ -3,174 +3,11 @@ import { Sparkles, RefreshCw, AlertTriangle } from "lucide-react";
 import JobCard from "../JobCard";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-
-const jobData = [
-  {
-    id: "1",
-    title: "Frontend Developer",
-    company: "Tech Innovations Inc.",
-    location: "San Francisco, CA",
-    salary: "$95,000 - $120,000",
-    description: "We are looking for a skilled Frontend Developer...",
-    responsibilities: [
-      "Develop new user-facing features",
-      "Build reusable components...",
-    ],
-    requirements: [
-      "Proficiency in React and TypeScript",
-      "Strong understanding of UI/UX...",
-    ],
-    posted: "2023-05-15",
-    type: "Full-time",
-    remote: true,
-    skills: [
-      "React",
-      "TypeScript",
-      "JavaScript",
-      "HTML",
-      "CSS",
-      "Tailwind CSS",
-    ],
-  },
-  {
-    id: "2",
-    title: "Backend Engineer",
-    company: "Data Systems LLC",
-    location: "Seattle, WA",
-    salary: "$110,000 - $140,000",
-    description: "We are seeking a talented Backend Engineer...",
-    responsibilities: [
-      "Design and implement server-side architecture",
-      "Develop APIs...",
-    ],
-    requirements: [
-      "Experience with Node.js and Express",
-      "Knowledge of SQL...",
-    ],
-    posted: "2023-05-10",
-    type: "Full-time",
-    remote: true,
-    skills: ["Node.js", "Express", "MongoDB", "SQL", "AWS", "API Design"],
-  },
-  {
-    id: "3",
-    title: "UI/UX Designer",
-    company: "Creative Solutions",
-    location: "New York, NY",
-    salary: "$85,000 - $110,000",
-    description: "We are looking for a creative UI/UX Designer...",
-    responsibilities: [
-      "Create user flows, wireframes...",
-      "Conduct user research...",
-    ],
-    requirements: ["Proficiency in design tools (Figma, Adobe XD)..."],
-    posted: "2023-05-12",
-    type: "Full-time",
-    remote: false,
-    skills: [
-      "Figma",
-      "UI Design",
-      "UX Design",
-      "Wireframing",
-      "Prototyping",
-      "User Research",
-    ],
-  },
-  {
-    id: "4",
-    title: "Full Stack Developer",
-    company: "Nexus Technologies",
-    location: "Austin, TX",
-    salary: "$100,000 - $130,000",
-    description: "We are seeking a Full Stack Developer...",
-    responsibilities: ["Develop features across the entire stack..."],
-    requirements: [
-      "Experience with React and Node.js",
-      "Knowledge of database systems...",
-    ],
-    posted: "2023-05-08",
-    type: "Full-time",
-    remote: true,
-    skills: ["React", "Node.js", "JavaScript", "TypeScript", "MongoDB", "AWS"],
-  },
-  {
-    id: "5",
-    title: "DevOps Engineer",
-    company: "Cloud Systems Inc.",
-    location: "Remote",
-    salary: "$120,000 - $150,000",
-    description: "We are looking for a DevOps Engineer...",
-    responsibilities: ["Build and maintain CI/CD pipelines..."],
-    requirements: ["Experience with cloud platforms (AWS/Azure/GCP)..."],
-    posted: "2023-05-05",
-    type: "Full-time",
-    remote: true,
-    skills: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux"],
-  },
-  {
-    id: "6",
-    title: "Product Manager",
-    company: "Innovate Solutions",
-    location: "Chicago, IL",
-    salary: "$110,000 - $140,000",
-    description: "We are seeking an experienced Product Manager...",
-    responsibilities: ["Define product vision and strategy..."],
-    requirements: ["Previous experience in product management..."],
-    posted: "2023-05-03",
-    type: "Full-time",
-    remote: false,
-    skills: [
-      "Product Management",
-      "Agile",
-      "Roadmapping",
-      "Market Research",
-      "User Stories",
-    ],
-  },
-  {
-    id: "7",
-    title: "Data Scientist",
-    company: "Analytics Pro",
-    location: "Boston, MA",
-    salary: "$100,000 - $130,000",
-    description: "We are looking for a Data Scientist...",
-    responsibilities: ["Design and implement machine learning models..."],
-    requirements: ["Experience with Python and data science libraries..."],
-    posted: "2023-05-01",
-    type: "Full-time",
-    remote: true,
-    skills: [
-      "Python",
-      "Machine Learning",
-      "TensorFlow",
-      "Data Analysis",
-      "Statistics",
-    ],
-  },
-  {
-    id: "8",
-    title: "Mobile Developer",
-    company: "AppWorks",
-    location: "Los Angeles, CA",
-    salary: "$90,000 - $120,000",
-    description: "We are seeking a Mobile Developer...",
-    responsibilities: ["Develop cross-platform mobile applications..."],
-    requirements: ["Experience with React Native or similar frameworks..."],
-    posted: "2023-04-28",
-    type: "Full-time",
-    remote: false,
-    skills: [
-      "React Native",
-      "JavaScript",
-      "iOS",
-      "Android",
-      "Mobile Development",
-    ],
-  },
-];
+import useJobs from "../../hooks/useJobs";
 
 export default function Recommendations() {
-  const { currentUser, isDarkMode } = useAuth();
+  const { dbUser, isDarkMode } = useAuth();
+  const { jobs, jobsLoading, error: jobsError } = useJobs();
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -179,29 +16,44 @@ export default function Recommendations() {
     setIsLoading(true);
     setError(null);
 
-    // Simulate async processing
+    // Simulate async processing with a minimum delay for visual feedback
     setTimeout(() => {
       try {
-        let jobs = [...jobData];
+        let recommendedJobs = [...jobs];
 
-        // Mock recommendation logic
-        if (currentUser?.skills && currentUser.skills.length > 0) {
-          jobs = jobs.map((job) => {
+        // Recommendation logic based on dbUser.profile.skills
+        const userSkills = dbUser?.profile?.skills || [];
+        if (userSkills.length > 0) {
+          recommendedJobs = recommendedJobs.map((job) => {
             const matchedSkills = job.skills.filter((skill) =>
-              currentUser.skills.includes(skill)
+              userSkills.includes(skill)
             );
             const matchScore = (matchedSkills.length / job.skills.length) * 100;
-            return { ...job, matchScore: Math.round(matchScore) };
+            const isApplied = dbUser?.applications?.some(
+              (app) => app.jobId === job._id
+            );
+            return { ...job, matchScore: Math.round(matchScore), isApplied };
           });
 
-          // Sort by matchScore (descending)
-          jobs.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+          // Sort by matchScore (descending), then randomize equal scores
+          recommendedJobs.sort((a, b) => {
+            const scoreDiff = (b.matchScore || 0) - (a.matchScore || 0);
+            return scoreDiff !== 0 ? scoreDiff : Math.random() - 0.5;
+          });
         } else {
-          // If no skills, return unsorted jobs with 0 matchScore
-          jobs = jobs.map((job) => ({ ...job, matchScore: 0 }));
+          // If no skills, shuffle jobs to simulate new recommendations
+          recommendedJobs = recommendedJobs
+            .map((job) => ({
+              ...job,
+              matchScore: 0,
+              isApplied: dbUser?.applications?.some(
+                (app) => app.jobId === job._id
+              ),
+            }))
+            .sort(() => Math.random() - 0.5);
         }
 
-        setRecommendations(jobs);
+        setRecommendations(recommendedJobs);
       } catch (err) {
         console.error("Error processing recommendations:", err);
         setError(
@@ -210,12 +62,14 @@ export default function Recommendations() {
       } finally {
         setIsLoading(false);
       }
-    }, 1000); // Simulate 1s delay
+    }, 1000); // 1-second delay to ensure loading state is visible
   };
 
   useEffect(() => {
-    fetchRecommendations();
-  }, []);
+    if (!jobsLoading) {
+      fetchRecommendations();
+    }
+  }, [jobs, jobsLoading, dbUser]);
 
   const handleRefresh = () => {
     fetchRecommendations();
@@ -244,13 +98,15 @@ export default function Recommendations() {
         </div>
         <button
           onClick={handleRefresh}
-          disabled={isLoading}
+          disabled={isLoading || jobsLoading}
           className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-            isLoading ? "opacity-50 cursor-not-allowed" : ""
+            isLoading || jobsLoading ? "opacity-50 cursor-not-allowed" : ""
           } animate__animated animate__zoomIn`}
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh Recommendations
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+          />
+          {isLoading ? "Refreshing..." : "Refresh Recommendations"}
         </button>
       </div>
 
@@ -263,10 +119,10 @@ export default function Recommendations() {
         }`}
       >
         <h2 className="text-lg font-medium mb-4">Your Skills Profile</h2>
-        {currentUser?.skills && currentUser.skills.length > 0 ? (
+        {dbUser?.profile?.skills?.length > 0 ? (
           <>
             <div className="flex flex-wrap gap-2 mb-4">
-              {currentUser.skills.map((skill) => (
+              {dbUser.profile.skills.map((skill) => (
                 <span
                   key={skill}
                   className={`px-3 py-1 text-sm rounded-full ${
@@ -329,7 +185,7 @@ export default function Recommendations() {
       {/* Recommendations */}
       <div>
         <h2 className="text-xl font-medium mb-4">Recommended Jobs</h2>
-        {isLoading ? (
+        {jobsLoading || isLoading ? (
           <div
             className={`flex flex-col items-center justify-center py-12 rounded-lg shadow-sm border ${
               isDarkMode
@@ -344,7 +200,7 @@ export default function Recommendations() {
               Analyzing your profile and finding the best matches...
             </p>
           </div>
-        ) : error ? (
+        ) : jobsError || error ? (
           <div
             className={`text-center py-12 rounded-lg border animate__animated animate__fadeIn ${
               isDarkMode
@@ -353,7 +209,7 @@ export default function Recommendations() {
             }`}
           >
             <p className={isDarkMode ? "text-red-400" : "text-red-600"}>
-              {error}
+              {jobsError?.message || error || "An error occurred"}
             </p>
             <button
               className={`mt-4 text-sm font-medium ${
@@ -404,12 +260,17 @@ export default function Recommendations() {
           <div className="space-y-6">
             {recommendations.map((job, index) => (
               <div
-                key={job.id}
+                key={job._id || job.id}
                 className={`animate__animated animate__fadeInUp animate__delay-${
                   (index % 5) + 1
                 }s`}
               >
-                <JobCard job={job} isRecommended={true} />
+                <JobCard
+                  job={job}
+                  isRecommended={true}
+                  matchScore={job.matchScore}
+                  isApplied={job.isApplied}
+                />
               </div>
             ))}
             <div className="text-center pt-4">
