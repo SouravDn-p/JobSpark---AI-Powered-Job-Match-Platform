@@ -16,7 +16,9 @@ export default function Main() {
           <Navbar />
         </div>
       )}
-      <Outlet />
+      <div className="h-full">
+        <Outlet />
+      </div>
       {!isLogin && <Footer />}
     </section>
   );

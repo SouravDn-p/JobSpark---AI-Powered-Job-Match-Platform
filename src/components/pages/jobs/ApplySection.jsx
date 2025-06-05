@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Share2, Mail, Briefcase } from "lucide-react";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const ApplySection = ({ job, isDarkMode, isApplied }) => {
   const [isApplying, setIsApplying] = useState(false);
   const [motivation, setMotivation] = useState("");
-  const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
   const [applications] = useState([
     {
       id: "1",
@@ -86,7 +86,7 @@ const ApplySection = ({ job, isDarkMode, isApplied }) => {
     };
 
     try {
-      const response = await axiosSecure.patch(
+      const response = await axiosPublic.patch(
         `/user/${dbUser.email}/apply`,
         applicationData
       );

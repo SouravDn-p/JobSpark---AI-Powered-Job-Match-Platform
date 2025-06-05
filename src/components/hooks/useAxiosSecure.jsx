@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContexts } from "../providers/AuthProviders";
 
 export const axiosSecure = axios.create({
-  baseURL: "https://jobspark-servercode.onrender.com",
+  baseURL: "http://localhost:5000",
   withCredentials: true, // This is essential for cookie-based auth
 });
 

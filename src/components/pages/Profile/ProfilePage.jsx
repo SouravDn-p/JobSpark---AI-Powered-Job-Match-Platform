@@ -38,10 +38,11 @@ import EducationForm from "./EducationForm";
 import PreferencesForm from "./PreferencesForm";
 import CareerInfoForm from "./CareerInfoForm";
 import ResumeForm from "./ResumeForm";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const ProfilePage = () => {
   const { dbUser, setDbUser, loader, isDarkMode, toggleTheme } = useAuth();
-  const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
   const [formData, setFormData] = useState({
     headline: "",
     bio: "",
@@ -216,7 +217,7 @@ const ProfilePage = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await axiosSecure.patch(`/user/${dbUser?.email}`, {
+      const response = await axiosPublic.patch(`/user/${dbUser?.email}`, {
         profile: formData,
       });
       if (response.data.success) {

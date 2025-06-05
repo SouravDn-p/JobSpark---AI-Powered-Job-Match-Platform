@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import useAxiosSecure from "./useAxiosSecure";
+import useAxiosPublic from "./useAxiosPublic";
 
 const useJobRecommendations = () => {
-  const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchRecommendations = async () => {
-    setIsLoading(true);
+    setIsLoading(true); 
     setError(null);
 
     try {
-      const response = await axiosSecure.get("/recommendations");
+      const response = await axiosPublic.get("/recommendations");
       setRecommendations(response.data);
     } catch (err) {
       console.error("Error fetching recommendations:", err);

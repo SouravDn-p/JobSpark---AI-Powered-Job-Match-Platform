@@ -23,7 +23,8 @@ export default function Recommendations() {
         const response = await axiosPublic.get("/recommendations", {
           params: { email: user?.email },
         });
-        setRecommendations(response.data);
+        console.log(response.data)
+        setRecommendations("response.data", response.data);
       } catch (err) {
         console.error("Error processing recommendations:", err);
         setError(
@@ -228,7 +229,7 @@ export default function Recommendations() {
           </div>
         ) : (
           <div className="space-y-6">
-            {recommendations.map((job, index) => (
+            {recommendations?.map((job, index) => (
               <div
                 key={job.jobDetails._id}
                 className={`animate__animated animate__fadeInUp animate__delay-${

@@ -258,16 +258,16 @@ const Navbar = () => {
                       {user.photoURL ? (
                         <img
                           src={user.photoURL || "/placeholder.svg"}
-                          alt={user.name}
+                          alt={user?.displayName}
                           className="h-full w-full object-cover"
                         />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center text-white font-medium">
-                          {user.name.charAt(0)}
+                          {user?.displayName?.charAt(0) || "guest"}
                         </div>
                       )}
                     </div>
-                    <span>{user.name}</span>
+                    <span>{user?.displayName}</span>
                   </Button>
 
                   {isUserDropdownOpen && (
@@ -509,7 +509,7 @@ const Navbar = () => {
       </div>
 
       {/* Keyframes for animations */}
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes spin {
           from {
             transform: rotate(0deg);
