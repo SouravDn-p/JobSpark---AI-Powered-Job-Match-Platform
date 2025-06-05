@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Card from "../common/Card";
 import Button from "../common/Button";
 import JobCard from "../jobs/JobCard";
-import LoadingSpinner from "../common/LoadingSpinner";
+import LoadingSpinner from "../../shared/LoadingSpinner";
 import {
   FaBriefcase,
   FaRegListAlt,

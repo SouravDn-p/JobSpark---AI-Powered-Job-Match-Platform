@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import useAxiosSecure from "./useAxiosSecure";
 const useJobs = () => {
+  // const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const [jobs, setJobs] = useState([]);
   const [jobsLoading, setJobsLoading] = useState(true);

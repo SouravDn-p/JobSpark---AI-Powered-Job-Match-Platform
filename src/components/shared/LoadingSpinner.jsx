@@ -6,12 +6,12 @@ export default function LoadingSpinner({ size = "default" }) {
 
   const sizes = {
     sm: "h-4 w-4",
-    default: "h-8 w-8",
+    default: "h-8 w-8", 
     lg: "h-12 w-12",
   };
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center items-center bg-gray-900 min-h-screen">
       <svg
         className={`animate-spin ${sizes[size]} ${
           isDarkMode ? "text-purple-500" : "text-blue-600"

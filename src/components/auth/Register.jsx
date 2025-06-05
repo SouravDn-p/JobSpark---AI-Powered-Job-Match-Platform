@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  updateProfile,
+} from "firebase/auth";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import auth from "../firebase/firebase.init";
 import {
@@ -12,6 +16,7 @@ import {
   Lock,
   Loader,
   Sparkles,
+  User,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import bg from "../../assets/bg.jpg";
@@ -24,6 +29,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [displayName, setDisplayName] = useState(""); // New state for displayName
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -43,11 +49,14 @@ export default function Register() {
 
     try {
       const userCredential = await createUser(email, password);
-      setUser(userCredential.user);
+      // Update the user's displayName in Firebase
+      await updateProfile(userCredential.user, { displayName });
+      setUser({ ...userCredential.user, displayName }); // Update local user state
       setSuccess("Registration successful! Welcome aboard!");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      setDisplayName(""); // Clear displayName input
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       console.error("Registration error:", err.message);
@@ -137,6 +146,31 @@ export default function Register() {
                 onSubmit={handleEmailPasswordRegister}
                 className="space-y-4"
               >
+                <div>
+                  <label
+                    className={`block text-xs font-medium ${
+                      isDarkMode ? "text-gray-200" : "text-gray-700"
+                    } mb-1`}
+                  >
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className={`w-full px-3 py-2 pl-10 text-sm rounded-lg border border-white/30 bg-white/20 dark:bg-gray-800/20 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
+                      required
+                    />
+                    <User
+                      className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label
                     className={`block text-xs font-medium ${
