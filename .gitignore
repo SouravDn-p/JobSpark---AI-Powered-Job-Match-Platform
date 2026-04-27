@@ -16,9 +16,6 @@ pakage.json
 pakage-lock.json
 
 .env.local*
-.env*
-.env
-.env.local
 
 # Editor directories and files
 .vscode/*
@@ -30,5 +27,10 @@ pakage-lock.json
 *.njsproj
 *.sln
 *.sw?
+
+
+
 temp_auto_push.bat
 temp_interactive_push.bat
+branch_structure.json
+config.bat
